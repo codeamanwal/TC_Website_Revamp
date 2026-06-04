@@ -30,43 +30,47 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative flex flex-col items-center w-full min-h-[100dvh] pt-[100px] lg:pt-[110px] xl:pt-[160px] pb-[10px] bg-[#FBF7F0] overflow-hidden shrink-0 m-0">
+    <section className="relative m-0 flex min-h-[100dvh] w-full shrink-0 flex-col items-center overflow-hidden bg-[#FBF7F0] pb-[10px] pt-[100px] lg:pt-[110px] xl:pt-[160px]">
       
       {/* HEADING */}
-      <h1 className="relative z-10 w-full max-w-[717px] text-center text-black font-libre text-[40px] md:text-[64px] font-normal leading-[110%] px-4">
+      <h1 className="relative z-10 w-full max-w-[717px] px-4 text-center font-['Libre_Baskerville',_serif] text-[40px] font-normal leading-[110%] text-black md:text-[64px]">
         300+ bets. all on
-        <span className="block text-[#001A4D] font-libre text-[48px] md:text-[80px] italic font-semibold leading-[120%]">
+        <span className="block font-['Libre_Baskerville',_serif] text-[48px] font-semibold italic leading-[120%] text-[#001A4D] md:text-[80px]">
           Founders
         </span>
       </h1>
 
       {/* SUBTITLE */}
-      <p className="relative z-10 w-full max-w-[593px] text-center text-[#323232] font-poppins text-[14px] md:text-[16px] font-normal not-italic leading-[150%] mt-[16px] lg:mt-[20px] xl:mt-[32px] px-4">
+      <p className="relative z-10 mt-[16px] w-full max-w-[593px] px-4 text-center font-['Poppins',_sans-serif] text-[14px] font-normal not-italic leading-[150%] text-[#323232] lg:mt-[20px] xl:mt-[32px] md:text-[16px]">
         We partner with founders from day one. We invest conviction, not
         just capital, and stay by their side through every stage of the
         journey
       </p>
 
       {/* BUTTONS */}
-      <div className="relative z-20 flex flex-col sm:flex-row items-center justify-center gap-[16px] md:gap-[24px] mt-[24px] lg:mt-[28px] xl:mt-[40px] px-4">
+      <div className="relative z-20 mt-[24px] flex flex-col items-center justify-center gap-[16px] px-4 sm:flex-row lg:mt-[28px] xl:mt-[40px] md:gap-[24px]">
         <Link 
           href="/portfolio" 
-          className="flex w-full sm:w-[185px] h-[54px] p-[10px] justify-center items-center gap-[10px] text-[#001A4D] font-libre text-[16px] font-semibold leading-[107%] hover:opacity-60 transition-opacity"
+          className="flex h-[54px] w-full items-center justify-center gap-[10px] p-[10px] font-['Libre_Baskerville',_serif] text-[16px] font-semibold leading-[107%] text-[#001A4D] transition-opacity hover:opacity-60 sm:w-[185px]"
         >
           View Portfolio
         </Link>
+        
+        {/* FIXED: Applied Canva Gradient directly via Tailwind hover arbitrary value */}
         <Link 
           href="/get-investment" 
-          className="group relative flex w-full sm:w-[185px] h-[54px] p-[10px] justify-center items-center gap-[10px] rounded-[9px] bg-[#001A4D] text-[#F5F0E8] font-libre text-[16px] font-semibold leading-[107%] shrink-0 m-0 overflow-hidden"
+          className="group relative m-0 flex h-[54px] w-full shrink-0 items-center justify-center gap-[10px] overflow-hidden rounded-[9px] bg-[#001A4D] p-[10px] font-['Libre_Baskerville',_serif] text-[16px] font-semibold leading-[107%] text-[#F5F0E8] transition-all sm:w-[185px]"
         >
-          <div className="absolute inset-0 rounded-[9px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" style={{ background: "radial-gradient(277.5% 75.29% at 20.81% 36.11%, #003CB3 0%, #012469 47.6%, #001A4D 100%)" }} />
+          {/* Smooth transition hover gradient using standard circle syntax to prevent warping */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_40%,#003CB3_0%,#012469_50%,#001A4D_100%)] opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100" />
+          
           <span className="relative z-10">Get Investment</span>
         </Link>
       </div>
 
       {/* CAROUSEL */}
-      <div className="relative z-0 w-full shrink-0 overflow-x-auto lg:overflow-visible mt-[30px] lg:mt-[-20px] xl:mt-[-10px] scrollbar-hide px-4 lg:px-0">
-        <div className="flex items-end justify-center gap-[10px] lg:gap-[14px] xl:gap-[17px] min-w-max lg:min-w-0 mx-auto">
+      <div className="scrollbar-hide relative z-0 mt-[30px] w-full shrink-0 overflow-x-auto px-4 lg:mt-[-20px] lg:overflow-visible lg:px-0 xl:mt-[-10px]">
+        <div className="mx-auto flex min-w-max items-end justify-center gap-[10px] lg:min-w-0 lg:gap-[14px] xl:gap-[17px]">
           {founderSlots.map((slot, i) => {
             const currentFounder = slot.pool[currentIndices[i]];
             const isLarge = slot.size === "large";
@@ -83,14 +87,14 @@ export default function Hero() {
                     style={{ transformStyle: "preserve-3d" }}
                     className={`flex flex-col items-start rounded-[12px] bg-white shadow-[0_4px_14.8px_0_rgba(101,101,101,0.25)] ${
                       isLarge 
-                        ? "w-[160px] h-[222px] lg:w-[200px] lg:h-[280px] xl:w-[278px] xl:h-[386px] p-[10px_10px_40px_10px] lg:p-[12px_12px_50px_12px] xl:p-[14px_14px_81px_13px] gap-[6px] xl:gap-[10px]" 
-                        : "w-[138px] h-[169px] lg:w-[172px] lg:h-[212px] xl:w-[240px] xl:h-[294px] p-[8px_10px_8px_10px] lg:p-[10px_12px_10px_12px] xl:p-[12px_15px_11px_14px] gap-[8px] xl:gap-[14px]"
+                        ? "h-[222px] w-[160px] gap-[6px] p-[10px_10px_40px_10px] lg:h-[280px] lg:w-[200px] lg:p-[12px_12px_50px_12px] xl:h-[386px] xl:w-[278px] xl:gap-[10px] xl:p-[14px_14px_81px_13px]" 
+                        : "h-[169px] w-[138px] gap-[1px] p-[10px_12px_12px_12px] lg:h-[212px] lg:w-[172px] lg:p-[12px_14px_14px_14px] xl:h-[294px] xl:w-[240px] xl:gap-[4px] xl:p-[14px_18px_16px_18px]"
                     }`}
                   >
-                    <div className={`relative shrink-0 rounded-[5px] overflow-hidden ${
+                    <div className={`relative shrink-0 overflow-hidden rounded-[5px] ${
                       isLarge 
-                        ? "w-[140px] h-[162px] lg:w-[176px] lg:h-[208px] xl:w-[251px] xl:h-[291px]" 
-                        : "w-[122px] h-[128px] lg:w-[148px] lg:h-[155px] xl:w-[211px] xl:h-[223px]"
+                        ? "h-[162px] w-[140px] lg:h-[208px] lg:w-[176px] xl:h-[291px] xl:w-[251px]" 
+                        : "h-[128px] w-[122px] lg:h-[155px] lg:w-[148px] xl:h-[223px] xl:w-[211px]"
                     }`}>
                       <Image
                         src={currentFounder.image}
@@ -102,12 +106,12 @@ export default function Hero() {
                     </div>
 
                     <div className="flex flex-col pt-[2px] xl:pt-[5px]">
-                      <p className={`text-black font-libre font-bold leading-[119%] ${
+                      <p className={`font-['Libre_Baskerville',_serif] font-bold leading-[119%] text-black ${
                         isLarge ? "text-[12px] lg:text-[16px] xl:text-[20px]" : "text-[10px] lg:text-[12px] xl:text-[16px]"
                       }`}>
                         {currentFounder.name}
                       </p>
-                      <p className={`text-black font-poppins font-light leading-[119%] mt-[2px] xl:mt-[4px] ${
+                      <p className={`mt-[2px] font-['Poppins',_sans-serif] font-light leading-[119%] text-black xl:mt-[4px] ${
                         isLarge ? "text-[8px] lg:text-[10px] xl:text-[12px]" : "text-[8px] lg:text-[10px] xl:text-[12px]"
                       }`}>
                         {currentFounder.role}

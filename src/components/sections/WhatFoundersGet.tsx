@@ -2,38 +2,38 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, Variants } from "framer-motion";
 
 const features = [
   {
     id: "hiring",
     title: "Hiring",
     desc: "Broadcast roles to 20,000+ community members. Warm intros to senior talent, not job board spam.",
-    top: 150, left: 150, width: 330,
+    top: 150, left: 150, width: 370,
   },
   {
     id: "network",
     title: "Network",
     desc: "650+ founders, strategic partnerships with global companies, curated expert network. A network that actually shows up.",
-    top: 48, left: 877, width: 330,
+    top: 48, left: 877, width: 370,
   },
   {
     id: "capital",
     title: "Follow-on Capital",
     desc: "Breakout companies get follow-on through the Winners Fund. Your earliest believers investing again.",
-    top: 380, left: 0, width: 330,
+    top: 380, left: 0, width: 370,
   },
   {
     id: "fundraising",
     title: "Fundraising",
     desc: "Warm intros to Series A/B/C funds. Pitch prep. Term sheet guidance. We've reviewed hundreds.",
-    top: 330, left:950, width: 330,
+    top: 330, left:950, width: 370,
   },
   {
     id: "firefighting",
     title: "Firefighting",
     desc: "Down rounds, team disagreements, co-founder disputes, regulatory surprises. We show up when it's hard, not just when it's easy.",
-    top: 580, left: 240, width: 330,
+    top: 580, left: 240, width: 370,
   },
   {
     id: "playbook",
@@ -43,7 +43,49 @@ const features = [
   },
 ];
 
-function FeatureCard({ feature }: { feature: typeof features[0] }) {
+// =========================================
+// 1-2-3 CARD ANIMATION VARIANTS
+// =========================================
+const cardContainerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      // Allow children within the card to stagger slightly
+      staggerChildren: 0.3,
+    },
+  },
+};
+
+const titleVariants: Variants = {
+  hidden: { opacity: 0, x: -30 },
+  visible: { 
+    opacity: 1, 
+    x: 0, 
+    transition: { duration: 0.8, ease: "easeOut" } 
+  },
+};
+
+const highlightVariants: Variants = {
+  hidden: { scaleX: 0 },
+  visible: { 
+    scaleX: 1, 
+    transition: { duration: 0.8, ease: "easeInOut" } 
+  },
+};
+
+const descVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.8, ease: "easeOut" } 
+  },
+};
+
+// =========================================
+// FEATURE CARD COMPONENT
+// =========================================
+function FeatureCard({ feature, index }: { feature: typeof features[0], index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const rawX = useMotionValue(0);
@@ -79,7 +121,9 @@ function FeatureCard({ feature }: { feature: typeof features[0] }) {
       ref={cardRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      className="absolute flex flex-col items-start gap-[20px] pointer-events-auto z-10"
+      // Attach the container variant here to orchestrate the 1-2-3 sequence
+      variants={cardContainerVariants}
+      className="absolute z-10 flex flex-col items-start gap-[20px] pointer-events-auto"
       style={{
         top: feature.top,
         left: feature.left,
@@ -92,7 +136,7 @@ function FeatureCard({ feature }: { feature: typeof features[0] }) {
       }}
     >
       <motion.div 
-        className="absolute inset-0 pointer-events-none rounded-[inherit] mix-blend-screen opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        className="absolute inset-0 transition-opacity duration-500 opacity-0 pointer-events-none mix-blend-screen group-hover:opacity-100 rounded-[inherit]"
         style={{
           background: useTransform(
             [glareX, glareY],
@@ -103,14 +147,27 @@ function FeatureCard({ feature }: { feature: typeof features[0] }) {
       />
       
       <div style={{ transform: "translateZ(30px)" }} className="flex flex-col gap-[16px]">
-        <div className="bg-[#D3E2FF] px-[12px] py-[10px] w-fit max-w-[476px]">
-          <h3 className="text-[#001A4D] font-libre text-[40px] font-semibold leading-[120%] m-0">
+        
+        {/* STEP 1: Title slides in from left */}
+        <motion.div variants={titleVariants} className="relative w-fit max-w-[476px]">
+          
+          {/* STEP 2: Highlight sweeps behind title */}
+          <motion.div 
+            variants={highlightVariants}
+            className="absolute inset-0 z-0 bg-[#D3E2FF]"
+            style={{ transformOrigin: "left" }}
+          />
+          
+          <h3 className="relative z-10 m-0 px-[12px] py-[10px] font-['Libre_Baskerville',_serif] text-[40px] font-semibold leading-[120%] text-[#001A4D]">
             {feature.title}
           </h3>
-        </div>
-        <p className="text-[#333] font-poppins text-[14px] font-normal leading-[150%] m-0">
+        </motion.div>
+
+        {/* STEP 3: Description slides up */}
+        <motion.p variants={descVariants} className="m-0 max-w-[370px] font-['Poppins',_sans-serif] text-[14px] font-normal leading-[150%] text-[#333]">
           {feature.desc}
-        </p>
+        </motion.p>
+
       </div>
     </motion.div>
   );
@@ -118,51 +175,62 @@ function FeatureCard({ feature }: { feature: typeof features[0] }) {
 
 export default function WhatFoundersGet() {
   return (
-    <section className="relative flex flex-col items-center w-full min-h-[100dvh] pt-[53px] lg:pt-[50px] pb-[20px] overflow-hidden m-0">
+    <section className="relative m-0 flex min-h-[100dvh] w-full flex-col items-center overflow-hidden pb-[20px] pt-[53px] lg:pt-[50px]">
       
       {/* HEADER SECTION */}
-      <div className="w-full max-w-[1280px] px-4 md:px-10 lg:px-0 z-10 flex flex-col items-start mx-auto">
+      <div className="z-10 mx-auto flex w-full max-w-[1280px] flex-col items-start px-4 md:px-10 lg:px-0">
         <motion.h2 
-          className="text-[#001A4D] font-libre text-[48px] lg:text-[80px] font-semibold leading-[120%]"
+          className="font-['Libre_Baskerville',_serif] text-[48px] font-semibold leading-[120%] text-[#001A4D] lg:text-[80px]"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.8 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.9, ease: "easeOut" }}
         >
           What
         </motion.h2>
 
         <motion.div 
-          className="flex w-full max-w-[508px] p-[10px] justify-center items-center gap-[10px] bg-[#D3E2FF] mt-2 lg:mt-4"
+          className="mt-2 flex w-full max-w-[508px] items-center justify-center gap-[10px] bg-[#D3E2FF] p-[10px] lg:mt-4"
           initial={{ opacity: 0, x: -80 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.8 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+          transition={{ duration: 0.9, ease: "easeOut", delay: 0.2 }}
         >
-          <span className="text-[#001A4D] font-libre text-[40px] lg:text-[80px] italic font-semibold leading-[120%] whitespace-nowrap">
+          <span className="whitespace-nowrap font-['Libre_Baskerville',_serif] text-[40px] font-semibold italic leading-[120%] text-[#001A4D] lg:text-[80px]">
             Founders get
           </span>
         </motion.div>
       </div>
 
-      {/* FLOWCHART SECTION - SCALED TO FIT ONE SCREEN */}
-      <div className="w-full h-[400px] sm:h-[450px] md:h-[550px] lg:h-[650px] xl:h-[750px] flex justify-center overflow-hidden lg:mt-[-60px] z-0">
-        <div className="relative w-[1280px] h-[800px] shrink-0 origin-top scale-[0.35] sm:scale-[0.5] md:scale-[0.65] lg:scale-[0.75] xl:scale-[0.9] 2xl:scale-100">
+      {/* FLOWCHART SECTION - STAGGERED ORCHESTRATOR */}
+      <div className="z-0 flex h-[400px] w-full justify-center overflow-hidden sm:h-[450px] md:h-[550px] lg:mt-[-60px] lg:h-[650px] xl:h-[750px]">
+        {/* We attach the orchestrator here. It triggers when 30% of this box is visible on screen */}
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          // Stagger the spawning of each complete card by 0.4 seconds
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.4, delayChildren: 0.5 } }
+          }}
+          className="relative h-[800px] w-[1280px] shrink-0 origin-top scale-[0.35] sm:scale-[0.5] md:scale-[0.65] lg:scale-[0.75] xl:scale-[0.9] 2xl:scale-100"
+        >
           
-          {/* CENTRAL TITAN CAPITAL HUB (Replaces Avatar) */}
-          <div className="absolute top-[340px] left-[640px] -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full bg-[#001A4D] flex items-center justify-center shadow-2xl z-20 pointer-events-none">
+          {/* CENTRAL TITAN CAPITAL HUB */}
+          <div className="absolute left-[640px] top-[340px] z-20 flex h-[200px] w-[200px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#001A4D] shadow-2xl pointer-events-none">
              <Image 
                 src="/images/logos/titancapitallogo.svg" 
                 alt="Titan Capital" 
                 width={140} 
                 height={45} 
-                className="brightness-0 invert object-contain" 
+                className="object-contain brightness-0 invert" 
              />
           </div>
 
           {/* ARROWS */}
           <svg 
-            className="absolute pointer-events-none overflow-visible z-0" 
+            className="pointer-events-none absolute z-0 overflow-visible" 
             style={{ 
               top: 140, 
               left: 360, 
@@ -209,15 +277,15 @@ export default function WhatFoundersGet() {
             <path d="M121.524 0.982291L121.337 5.126e-06L119.372 0.374778L119.559 1.35706L120.542 1.16968L121.524 0.982291ZM0.156324 140.633C-0.140172 141.099 -0.00280225 141.717 0.463147 142.013L8.05623 146.845C8.52218 147.142 9.14026 147.004 9.43676 146.538C9.73325 146.072 9.59588 145.454 9.12994 145.158L2.38053 140.863L6.67535 134.113C6.97185 133.647 6.83448 133.029 6.36853 132.733C5.90258 132.436 5.2845 132.574 4.988 133.04L0.156324 140.633ZM1 141.17L1.21696 142.146C2.07002 141.956 2.91748 141.764 3.75937 141.568L3.53288 140.594L3.30639 139.62C2.47089 139.814 1.62978 140.005 0.783043 140.193L1 141.17ZM8.49829 139.387L8.74408 140.357C10.4166 139.933 12.0661 139.496 13.6931 139.048L13.4273 138.084L13.1615 137.12C11.548 137.564 9.91176 137.997 8.2525 138.418L8.49829 139.387ZM18.3405 136.672L18.6272 137.63C20.2824 137.135 21.9132 136.627 23.5198 136.106L23.2116 135.155L22.9034 134.203C21.3113 134.719 19.6949 135.223 18.0539 135.714L18.3405 136.672ZM28.0482 133.525L28.3788 134.469C30.0143 133.896 31.6236 133.31 33.2069 132.711L32.8531 131.775L32.4993 130.84C30.9315 131.433 29.3378 132.014 27.7176 132.581L28.0482 133.525ZM37.5859 129.916L37.9636 130.842C39.5749 130.184 41.1579 129.513 42.7129 128.829L42.3102 127.914L41.9076 126.999C40.3692 127.675 38.8029 128.339 37.2082 128.99L37.5859 129.916ZM46.9178 125.811L47.3458 126.714C48.9233 125.967 50.4704 125.206 51.9876 124.432L51.533 123.541L51.0785 122.651C49.579 123.416 48.0496 124.168 46.4898 124.907L46.9178 125.811ZM56.0363 121.157L56.5178 122.033C58.0344 121.2 59.5191 120.353 60.9724 119.493L60.4633 118.633L59.9542 117.772C58.5192 118.621 57.0529 119.457 55.5548 120.28L56.0363 121.157ZM64.8308 115.951L65.3683 116.794C66.8262 115.865 68.2502 114.922 69.6411 113.967L69.075 113.142L68.5089 112.318C67.137 113.26 65.732 114.19 64.2933 115.107L64.8308 115.951ZM73.2313 110.178L73.8265 110.982C75.2249 109.946 76.587 108.897 77.9136 107.836L77.2891 107.055L76.6645 106.274C75.3573 107.32 74.0148 108.353 72.6361 109.374L73.2313 110.178ZM81.2089 103.797L81.8628 104.553C83.1713 103.423 84.442 102.28 85.6758 101.126L84.9928 100.396L84.3099 99.6654C83.0952 100.801 81.8439 101.927 80.5551 103.04L81.2089 103.797ZM88.665 96.8207L89.3771 97.5228C90.5969 96.2859 91.7767 95.0382 92.9177 93.7811L92.1772 93.109L91.4367 92.4369C90.3143 93.6736 89.1534 94.9012 87.953 96.1185L88.665 96.8207ZM95.5245 89.2613L96.2927 89.9016C97.4013 88.5714 98.4687 87.2324 99.496 85.8862L98.701 85.2795L97.9061 84.6729C96.896 85.9964 95.8465 87.313 94.7563 88.6211L95.5245 89.2613ZM101.712 81.15L102.533 81.7213C103.526 80.2946 104.477 78.8616 105.386 77.424L104.54 76.8895L103.695 76.3551C102.802 77.7678 101.868 79.1763 100.892 80.5786L101.712 81.15ZM107.174 72.5118L108.042 73.008C108.903 71.5011 109.721 69.9911 110.497 68.4801L109.607 68.0233L108.718 67.5665C107.956 69.0512 107.152 70.5348 106.306 72.0156L107.174 72.5118ZM111.836 63.4313L112.745 63.8476C113.468 62.2695 114.146 60.6925 114.782 59.1189L113.855 58.7441L112.928 58.3694C112.303 59.9154 111.636 61.4647 110.927 63.0151L111.836 63.4313ZM115.66 53.9704L116.603 54.3029C117.181 52.6645 117.714 51.0323 118.205 49.4088L117.248 49.1194L116.291 48.8299C115.808 50.4249 115.284 52.0284 114.717 53.638L115.66 53.9704ZM118.614 44.2003L119.584 44.4461C120.011 42.7586 120.395 41.0836 120.736 39.4242L119.756 39.2229L118.777 39.0215C118.442 40.6515 118.065 42.2968 117.645 43.9546L118.614 44.2003ZM120.67 34.1968L121.658 34.353C121.931 32.6273 122.159 30.9225 122.345 29.2423L121.351 29.1322L120.357 29.0221C120.174 30.6717 119.95 32.3457 119.682 34.0406L120.67 34.1968ZM121.794 24.0402L122.792 24.103C122.902 22.3503 122.967 20.6303 122.99 18.9474L121.99 18.9336L120.99 18.9197C120.968 20.57 120.904 22.2573 120.796 23.9774L121.794 24.0402ZM121.931 13.8283L122.93 13.7907C122.864 12.0258 122.751 10.3115 122.597 8.65385L121.601 8.74648L120.605 8.83911C120.756 10.4596 120.867 12.1372 120.932 13.8659L121.931 13.8283ZM120.973 3.66419L121.961 3.51033C121.827 2.64734 121.681 1.8043 121.524 0.982291L120.542 1.16968L119.559 1.35706C119.712 2.15632 119.854 2.977 119.985 3.81804L120.973 3.66419Z" fill="black"/>
           </svg>
           <svg className="absolute pointer-events-none overflow-visible z-0" style={{ top: 380, left: 700, width: 75, height: 135 }} xmlns="http://www.w3.org/2000/svg">
-            <path d="M34.6481 130.904C34.6833 131.455 35.1586 131.873 35.7097 131.838L44.6915 131.265C45.2427 131.23 45.661 130.755 45.6258 130.204C45.5907 129.653 45.1154 129.234 44.5642 129.269L36.5804 129.778L36.0713 121.795C36.0361 121.244 35.5608 120.825 35.0097 120.86C34.4585 120.896 34.0402 121.371 34.0753 121.922L34.6481 130.904ZM0.39903 0.91723L0.00040391 1.83434C0.520365 2.06035 1.39444 2.32054 2.48077 2.6207L2.7471 1.65682L3.01343 0.692942C1.89436 0.383732 1.16412 0.159401 0.797657 0.000115744L0.39903 0.91723ZM7.61073 2.96316L7.3493 3.92838C8.79612 4.32025 10.4082 4.76668 12.1511 5.27562L12.4314 4.31571L12.7117 3.3558C10.9525 2.84208 9.32709 2.392 7.87215 1.99793L7.61073 2.96316ZM17.2402 5.78626L16.9349 6.73854C18.4612 7.22776 20.0492 7.75964 21.682 8.33792L22.0159 7.39529L22.3497 6.45267C20.6961 5.86701 19.0889 5.32872 17.5454 4.83399L17.2402 5.78626ZM26.7314 9.15413L26.3658 10.0849C27.8804 10.6798 29.4174 11.3141 30.9649 11.9904L31.3654 11.0741L31.7658 10.1577C30.1935 9.47063 28.6332 8.82673 27.097 8.22335L26.7314 9.15413ZM35.922 13.1791L35.4831 14.0776C36.9601 14.799 38.4357 15.5603 39.8996 16.3637L40.3807 15.4871L40.8619 14.6104C39.3682 13.7907 37.8644 13.0149 36.3608 12.2805L35.922 13.1791ZM44.7171 18.0179L44.1895 18.8674C45.5916 19.7382 46.9724 20.6512 48.3225 21.6086L48.9009 20.7929L49.4794 19.9772C48.094 18.9947 46.6791 18.0592 45.2447 17.1684L44.7171 18.0179ZM52.8947 23.8342L52.2611 24.6078C53.5374 25.6533 54.7733 26.7446 55.9593 27.8837L56.652 27.1625L57.3447 26.4413C56.1184 25.2635 54.8429 24.1373 53.5284 23.0606L52.8947 23.8342ZM60.1165 30.7941L59.3623 31.4508C60.4399 32.6883 61.458 33.9755 62.4075 35.3144L63.2232 34.7359L64.0389 34.1574C63.049 32.7617 61.9895 31.4224 60.8707 30.1375L60.1165 30.7941ZM65.9027 38.9799L65.029 39.4664C65.8191 40.8852 66.5342 42.3562 67.1658 43.8816L68.0897 43.4991L69.0136 43.1165C68.3518 41.5178 67.6028 39.9774 66.7764 38.4934L65.9027 38.9799ZM69.7316 48.2391L68.769 48.51C69.2028 50.0515 69.5547 51.6441 69.8171 53.2899L70.8046 53.1324L71.7922 52.975C71.5175 51.2526 71.149 49.5842 70.6942 47.9683L69.7316 48.2391ZM71.3162 58.1082L70.3174 58.1563C70.3938 59.7426 70.3904 61.3748 70.3015 63.0545L71.3001 63.1074L72.2987 63.1603C72.3911 61.4148 72.3948 59.7151 72.3151 58.0601L71.3162 58.1082ZM70.8033 68.0947L69.8136 67.9513C69.5835 69.54 69.2797 71.1682 68.898 72.8369L69.8728 73.0599L70.8476 73.2829C71.241 71.5633 71.5548 69.882 71.7929 68.238L70.8033 68.0947ZM68.5833 77.8907L67.6266 77.5998C67.1639 79.121 66.6389 80.6736 66.0485 82.2584L66.9856 82.6075L67.9227 82.9566C68.5268 81.3349 69.0651 79.7434 69.5401 78.1817L68.5833 77.8907ZM65.0786 87.3187L64.1621 86.9188C63.5261 88.3764 62.8368 89.8595 62.0922 91.3686L62.989 91.8111L63.8857 92.2536C64.6437 90.7174 65.3463 89.2059 65.9952 87.7186L65.0786 87.3187ZM60.6621 96.2817L59.7848 95.8018C59.0105 97.2172 58.1892 98.6542 57.3192 100.113L58.1781 100.625L59.037 101.137C59.9192 99.6579 60.7529 98.1994 61.5394 96.7616L60.6621 96.2817ZM55.5327 104.896L54.6913 104.355C53.8162 105.718 52.8998 107.099 51.9412 108.498L52.7662 109.063L53.5912 109.628C54.5607 108.213 55.488 106.816 56.3741 105.436L55.5327 104.896ZM49.8533 113.193L49.0438 112.606C48.0975 113.91 47.1155 115.23 46.0969 116.565L46.8919 117.172L47.687 117.778C48.7151 116.43 49.7068 115.098 50.6627 113.78L49.8533 113.193ZM43.7263 121.224L42.9451 120.6C41.9506 121.844 40.9251 123.102 39.8679 124.372L40.6367 125.012L41.4054 125.651C42.4707 124.371 43.5045 123.103 44.5074 121.849L43.7263 121.224ZM37.3577 128.878L36.6011 128.224C36.0406 128.872 35.4721 129.524 34.8954 130.179L35.6461 130.84L36.3968 131.501C36.9774 130.841 37.5498 130.185 38.1143 129.532L37.3577 128.878Z" fill="black"/>
+            <path d="M111.283 160.943C111.582 161.407 112.201 161.541 112.665 161.242L120.229 156.364C120.693 156.065 120.827 155.446 120.528 154.982C120.228 154.518 119.609 154.384 119.145 154.683L112.422 159.019L108.086 152.296C107.787 151.831 107.168 151.698 106.704 151.997C106.24 152.296 106.106 152.915 106.406 153.38L111.283 160.943ZM0.478714 0.877592L-0.000268253 1.75542C0.576143 2.06993 1.40377 2.3942 2.40207 2.73862L2.72821 1.7933L3.05435 0.847977C2.06738 0.507469 1.37628 0.228166 0.957696 -0.000232953L0.478714 0.877592ZM7.52688 3.30003L7.23903 4.25771C8.68498 4.69232 10.297 5.17192 12.0625 5.70841L12.3533 4.75161L12.644 3.7948C10.875 3.25723 9.25357 2.77484 7.81473 2.34236L7.52688 3.30003ZM17.1809 6.25071L16.8775 7.2036C18.388 7.6844 19.9719 8.20101 21.6192 8.75716L21.9391 7.8097L22.259 6.86224C20.5992 6.30188 19.0041 5.78164 17.4842 5.29782L17.1809 6.25071ZM26.679 9.46214L26.3402 10.403C27.8621 10.9511 29.4245 11.5314 31.021 12.1463L31.3804 11.2132L31.7399 10.28C30.1288 9.65942 28.5526 9.07399 27.0178 8.52129L26.679 9.46214ZM36.0268 13.0655L35.6454 13.9899C37.1515 14.6113 38.6804 15.2632 40.2273 15.9474L40.6318 15.0329L41.0364 14.1184C39.4734 13.427 37.929 12.7685 36.4082 12.1411L36.0268 13.0655ZM45.1918 17.1225L44.7629 18.0259C46.2471 18.7304 47.7428 19.465 49.246 20.2314L49.7002 19.3405L50.1544 18.4496C48.6338 17.6743 47.1211 16.9313 45.6206 16.2191L45.1918 17.1225ZM54.1489 21.6923L53.6683 22.5692C55.1083 23.3584 56.5513 24.1776 57.9936 25.0281L58.5015 24.1667L59.0094 23.3053C57.5484 22.4438 56.0872 21.6143 54.6296 20.8153L54.1489 21.6923ZM62.7757 26.7821L62.2396 27.6263C63.6323 28.5107 65.021 29.4255 66.4026 30.372L66.9677 29.547L67.5329 28.722C66.1315 27.762 64.7234 26.8344 63.3118 25.938L62.7757 26.7821ZM71.0642 32.4641L70.4692 33.2678C71.7913 34.2466 73.1037 35.2561 74.4035 36.2974L75.0288 35.517L75.654 34.7366C74.3338 33.6789 73.0012 32.6538 71.6592 31.6603L71.0642 32.4641ZM78.8797 38.73L78.2237 39.4848C79.4707 40.5686 80.7028 41.684 81.9171 42.832L82.6041 42.1053L83.291 41.3787C82.056 40.211 80.8032 39.0769 79.5357 37.9752L78.8797 38.73ZM86.1696 45.6246L85.4517 46.3208C86.5978 47.5024 87.7244 48.7158 88.829 49.962L89.5773 49.2987L90.3257 48.6354C89.2008 47.3663 88.0538 46.131 86.8874 44.9284L86.1696 45.6246ZM92.8236 53.1359L92.0454 53.7638C93.0774 55.0429 94.0861 56.3541 95.0692 57.6981L95.8764 57.1078L96.6835 56.5174C95.6814 55.1474 94.6534 53.8112 93.6019 52.508L92.8236 53.1359ZM98.7354 61.2206L97.9007 61.7713C98.8089 63.1477 99.6905 64.5563 100.543 65.9979L101.404 65.4887L102.265 64.9796C101.395 63.5095 100.496 62.0731 99.5701 60.6698L98.7354 61.2206ZM103.842 69.8511L102.958 70.3175C103.722 71.7683 104.458 73.2506 105.164 74.765L106.07 74.3428L106.977 73.9205C106.257 72.3762 105.507 70.8645 104.727 69.3848L103.842 69.8511ZM108.083 78.9552L107.157 79.3325C107.772 80.8419 108.357 82.3815 108.911 83.9518L109.854 83.6193L110.797 83.2867C110.232 81.6862 109.636 80.1168 109.009 78.5778L108.083 78.9552ZM111.417 88.4146L110.459 88.702C110.927 90.2609 111.364 91.8484 111.77 93.4653L112.74 93.2219L113.71 92.9786C113.297 91.3323 112.851 89.7153 112.375 88.1272L111.417 88.4146ZM113.853 98.1237L112.873 98.3234C113.2 99.9242 113.496 101.552 113.76 103.208L114.747 103.051L115.735 102.893C115.466 101.209 115.165 99.553 114.833 97.924L113.853 98.1237ZM115.433 108.015L114.44 108.132C114.631 109.759 114.792 111.411 114.922 113.089L115.919 113.012L116.916 112.935C116.784 111.23 116.621 109.552 116.427 107.899L115.433 108.015ZM116.211 118.009L115.212 118.049C115.277 119.685 115.313 121.346 115.319 123.031L116.319 123.027L117.319 123.023C117.313 121.315 117.276 119.63 117.21 117.969L116.211 118.009ZM116.252 128.041L115.252 128.011C115.203 129.644 115.126 131.298 115.021 132.975L116.019 133.038L117.017 133.1C117.123 131.402 117.201 129.726 117.252 128.071L116.252 128.041ZM115.625 138.07L114.629 137.976C114.477 139.593 114.3 141.23 114.097 142.886L115.089 143.008L116.082 143.13C116.288 141.455 116.467 139.799 116.62 138.163L115.625 138.07ZM114.395 148.066L113.407 147.916C113.166 149.509 112.901 151.12 112.612 152.748L113.596 152.923L114.581 153.098C114.873 151.453 115.141 149.825 115.384 148.215L114.395 148.066ZM112.652 157.882L111.672 157.682C111.503 158.514 111.328 159.35 111.146 160.19L112.124 160.401L113.101 160.612C113.284 159.764 113.461 158.92 113.632 158.081L112.652 157.882Z" fill="black"/>
           </svg>
 
-          {/* FEATURE CARDS */}
-          {features.map((feature) => (
-            <FeatureCard key={feature.id} feature={feature} />
+          {/* FEATURE CARDS - DYNAMIC ARROWS CAN BE ANIMATED IN THE SAME SEQUENCE IF YOU WANT */}
+          {features.map((feature, i) => (
+            <FeatureCard key={feature.id} feature={feature} index={i} />
           ))}
           
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -4,12 +4,12 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 
 const impactData = [
-  { num: "300+", label: "Startups Backed" },
-  { num: "650+", label: "Founders Backed" },
-  { num: "₹450B", label: "Capital Raised by Portfolio" },
-  { num: "6", label: "Indicorns" },
-  { num: "250M+", label: "Lives Impacted" },
-  { num: "4", label: "IPO's" },
+  { num: "300+", label: "Startups Backed", caption: "Across seed, pre-Series A and growth stages since 2011" },
+  { num: "650+", label: "Founders Backed", caption: "Operators, builders, and category creators" },
+  { num: "₹450B+", label: "Capital Raised by Portfolio", caption: "From 100+ institutional investors globally" },
+  { num: "6", label: "Indicorns", caption: "Direct employment across the portfolio ecosystem" },
+  { num: "250M+", label: "Lives Impacted", caption: "Customers served by portfolio companies" },
+  { num: "4", label: "IPO's", caption: "Direct employment across the portfolio ecosystem" },
 ];
 
 const CarouselItem = ({ 
@@ -38,7 +38,6 @@ const CarouselItem = ({
     return `${Math.sin(diff * angleMultiplier) * radius}px`;
   });
 
-  // ANIMATION LAYOUT FIX: Changed from plus to minus to curve the items UPWARD on the sides
   const y = useTransform(progress, (p) => {
     const diff = getDiff(p);
     return `${- (diff * diff) * 45}px`; 
@@ -46,7 +45,8 @@ const CarouselItem = ({
 
   const scale = useTransform(progress, (p) => {
     const diff = getDiff(p);
-    return Math.max(0, Math.cos(diff * angleMultiplier)); 
+    const rawScale = Math.cos(diff * angleMultiplier);
+    return Math.max(0.2, rawScale); 
   });
 
   const opacity = useTransform(progress, (p) => {
@@ -55,19 +55,32 @@ const CarouselItem = ({
     return Math.max(0, Math.cos(diff * angleMultiplier));
   });
 
+  const captionOpacity = useTransform(progress, (p) => {
+    const diff = Math.abs(getDiff(p));
+    return diff < 0.3 ? Math.max(0, Math.cos(diff * Math.PI * 1.6)) : 0;
+  });
+
   const zIndex = useTransform(progress, (p) => Math.round(10 - Math.abs(getDiff(p))));
 
   return (
     <motion.div
       style={{ x, y, scale, opacity, zIndex }}
-      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center text-center w-[90%] max-w-[600px]"
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center text-center w-[90%] max-w-[700px]"
     >
-      <span className="text-[64px] md:text-[128px] font-bold text-[#001A4D] font-libre leading-none mb-4 md:mb-6 tracking-tight">
+      <h2 className="text-[64px] md:text-[128px] font-medium text-[#001A4D] font-['Libre_Baskerville',_serif] leading-none mb-4 md:mb-6 tracking-tight">
         {data.num}
-      </span>
-      <span className="text-[24px] md:text-[44px] font-semibold text-[#001A4D] font-libre leading-tight">
+      </h2>
+      
+      <h3 className="text-[24px] md:text-[44px] font-medium text-[#001A4D] font-['Libre_Baskerville',_serif] leading-[120%] max-w-[180px] md:max-w-[340px] mx-auto">
         {data.label}
-      </span>
+      </h3>
+      
+      <motion.h4 
+        style={{ opacity: captionOpacity }}
+        className="mt-4 md:mt-6 text-[#323232] font-['Poppins',_sans-serif] text-[16px] md:text-[20px] font-normal leading-relaxed w-[80%] max-w-xl mx-auto"
+      >
+        {data.caption}
+      </motion.h4>
     </motion.div>
   );
 };
@@ -80,6 +93,17 @@ export default function ImpactAtGlance() {
     offset: ["start start", "end end"],
   });
 
+  const blobScale = useTransform(scrollYProgress, (p) => {
+    const totalItems = impactData.length;
+    const currentPosition = p * totalItems;
+    const distanceFromNearestCenter = Math.abs(currentPosition - Math.round(currentPosition));
+    
+    const bloomFactor = Math.max(0, Math.cos(distanceFromNearestCenter * Math.PI));
+    return bloomFactor;
+  });
+
+  const blobOpacity = useTransform(blobScale, [0, 1], [0.1, 1]);
+
   return (
     <section 
       ref={containerRef} 
@@ -87,9 +111,9 @@ export default function ImpactAtGlance() {
     >
       <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-[40px] md:pt-[80px]">
         
-      {/* =========================================
-            ANIMATED HEADING SEQUENCE
-            ========================================= */}
+        {/* =========================================
+              FIGMA RESTORED HEADING SEQUENCE
+              ========================================= */}
         <div className="flex flex-col items-center justify-center w-full px-4 mb-auto pt-[40px] md:pt-[70px] z-50">
           <motion.div 
             className="flex flex-col md:flex-row items-center justify-center text-center gap-2 md:gap-0 w-full max-w-[1280px] mx-auto"
@@ -97,10 +121,9 @@ export default function ImpactAtGlance() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.5 }}
           >
-            
-            {/* STEP 1 & 2: "Impact" and its Highlight Box */}
+            {/* "Impact" -> font-bold (700), italic, text-[80px], leading-[120%] */}
             <motion.span 
-              className="relative overflow-hidden inline-block md:mr-4 p-[6px_16px] text-[40px] md:text-[80px] text-[#001A4D] font-libre font-semibold bg-transparent"
+              className="relative overflow-hidden inline-block md:mr-4 p-[6px_16px] text-[40px] md:text-[80px] text-[#001A4D] font-['Libre_Baskerville',_serif] font-bold bg-transparent"
               variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
@@ -117,9 +140,9 @@ export default function ImpactAtGlance() {
               <span className="relative z-10 italic leading-[120%]">Impact</span>
             </motion.span>
             
-            {/* STEP 3: "at glance" */}
+            {/* "at glance" -> font-semibold (600), normal style, text-[80px], leading-[120%] */}
             <motion.span 
-              className="px-4 text-[40px] md:text-[80px] text-[#001A4D] font-libre font-semibold"
+              className="px-4 text-[40px] md:text-[80px] text-[#001A4D] font-['Libre_Baskerville',_serif] font-semibold leading-[120%]"
               variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.9 } }
@@ -130,13 +153,14 @@ export default function ImpactAtGlance() {
           </motion.div>
         </div>
 
-        {/* =========================================
-            SPHERICAL INFINITE GLOBE CAROUSEL
-            ========================================= */}
+        {/* SPHERICAL INFINITE GLOBE CAROUSEL */}
         <div className="relative w-full flex-1 flex items-center justify-center -mt-10 md:-mt-20">
           
-          {/* CENTER GRADIENT BLOB */}
-          <div className="absolute inset-0 m-auto w-[240px] h-[240px] md:w-[400px] md:h-[400px] bg-[#D3E2FF] opacity-30 md:opacity-100 blur-[60px] md:blur-[100px] rounded-full pointer-events-none z-0" />
+          {/* BLOOMING GRADIENT BLOB */}
+          <motion.div 
+            style={{ scale: blobScale, opacity: blobOpacity }}
+            className="absolute inset-0 m-auto w-[240px] h-[240px] md:w-[400px] md:h-[400px] bg-[#D3E2FF] blur-[60px] md:blur-[100px] rounded-full pointer-events-none z-0 transition-shadow duration-150 ease-out" 
+          />
 
           {/* INFINITE CAROUSEL ITEMS */}
           {impactData.map((item, i) => (
@@ -147,17 +171,6 @@ export default function ImpactAtGlance() {
               progress={scrollYProgress} 
             />
           ))}
-
-          {/* STATIC OVERLAY DESCRIPTION */}
-          <motion.p 
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-[170px] md:translate-y-[270px] text-[#323232] font-poppins text-[10px] md:text-[12px] text-center w-[50%] max-w-2xl leading-relaxed z-50 pointer-events-none"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.8 }}
-            transition={{ duration: 0.6, ease: "easeOut" }} 
-          >
-            Across seed, pre-Series A and growth stages since 2011
-          </motion.p>
 
         </div>
       </div>

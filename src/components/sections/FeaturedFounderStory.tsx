@@ -97,7 +97,6 @@ export default function FeaturedFounderStory() {
 
   return (
     <section className="flex w-full flex-col items-center justify-start gap-6 bg-white px-5 py-6">
-      {/* Reduced py and gap to condense the vertical height */}
       
       {/* 1. Heading */}
       <motion.div 
@@ -131,7 +130,7 @@ export default function FeaturedFounderStory() {
         </motion.h2>
       </motion.div>
 
-      {/* 2. TV Wrapper - slightly scaled down max-width to save vertical space */}
+      {/* 2. TV Wrapper */}
       <div className="relative w-full max-w-[650px]">
         <Image
           src="/images/misc/television.png"
@@ -207,8 +206,8 @@ export default function FeaturedFounderStory() {
         </motion.p>
       </AnimatePresence>
 
-      {/* 4. CTA Button - Reduced height to 60px to save space */}
-      <button className="flex h-[60px] w-full max-w-[280px] cursor-pointer items-center justify-center rounded-lg border-none bg-[#001A4D] font-['Libre_Baskerville',_serif] text-[22px] font-semibold text-white transition-opacity hover:opacity-90">
+      {/* 4. CTA Button: Strictly locked to 167px x 54px with a 9px border radius */}
+      <button className="flex h-[54px] w-[167px] shrink-0 cursor-pointer items-center justify-center gap-[10px] rounded-[9px] border-none bg-[#001A4D] p-[10px] font-['Libre_Baskerville',_serif] text-[14px] font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#001A4D] hover:via-[#1A3673] hover:to-[#001A4D] hover:opacity-100">
         Read full story
       </button>
 

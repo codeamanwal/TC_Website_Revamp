@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, Variants } from "framer-motion";
+import Link from "next/link";
+import { motion, Variants, useInView } from "framer-motion";
 
-// Updated data with all 5 founders and their quotes
 const testimonials = [
   {
     id: 1,
@@ -31,47 +31,72 @@ const testimonials = [
     id: 4,
     name: "Raghu Ravinutala",
     role: "Cofounder, Yellow.ai",
-    image: "/images/Testimonials/Raghu-Ravinutala.webp", // Adjust image path as needed
+    image: "/images/Testimonials/Raghu-Ravinutala.webp", 
     text: "“Titan Capital is truly ‘founder only’. From the first interaction, I was very overwhelmed with their focus on making the founder successful beyond anything. They were always there as a great sounding board whenever we had to make critical decisions. I always felt Titan Capital had our back whatever is the situation and that's a great support an early-stage founder can have.”",
   },
   {
     id: 5,
     name: "Aarti Gill",
     role: "Cofounder, OZiva",
-    image: "/images/Testimonials/Aarti Gill.png", // Adjust image path as needed
+    image: "/images/Testimonials/Aarti Gill.png", 
     text: "“When I first met Kunal, I wasn’t even considering raising equity capital - but that one conversation completely changed my perspective. Partnering with Titan Capital was one of the best decisions we made at OZiva. With Kunal’s guidance, I learned not just business strategies like fundraising, negotiation, and stakeholder management, but also invaluable life lessons about balancing family and work. Thanks to Kunal, Rohit, and the Titan team.”",
   },
 ];
 
 export default function FounderTestimonial() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [flippedCardId, setFlippedCardId] = useState<number | null>(null);
+  const [maxScroll, setMaxScroll] = useState(0);
 
-//   // 1. Auto-play interval: Changes carousel slide every 4 seconds
-//   useEffect(() => {
-//     const slideTimer = setInterval(() => {
-//       setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-//     }, 4000);
-//     return () => clearInterval(slideTimer);
-//   }, []);
+  // Refs for determining boundaries & intersections
+  const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  // 2. Random Flip interval: Picks a random card to flip every 6 seconds
+  // Trigger when the section scrolls into view
+  const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+
+  // 1. Calculate max scroll to clamp the track to the right edge
   useEffect(() => {
-    const flipTimer = setInterval(() => {
-      setFlippedCardId((prevId) => {
-        let nextId;
-        // Ensure we pick a DIFFERENT card to flip so it feels dynamic
-        do {
-          nextId = testimonials[Math.floor(Math.random() * testimonials.length)].id;
-        } while (nextId === prevId);
-        return nextId;
-      });
-    }, 6000); 
-    return () => clearInterval(flipTimer);
+    const updateMaxScroll = () => {
+      if (containerRef.current && trackRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const trackWidth = trackRef.current.scrollWidth;
+        setMaxScroll(Math.max(0, trackWidth - containerWidth));
+      }
+    };
+
+    updateMaxScroll();
+    // Small delay ensures images/fonts have loaded for accurate width calculation
+    const timer = setTimeout(updateMaxScroll, 250); 
+    window.addEventListener("resize", updateMaxScroll);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateMaxScroll);
+    };
   }, []);
 
-  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  // 2. Auto-scroll when the section comes into view
+  useEffect(() => {
+    if (isInView) {
+      const timer = setTimeout(() => {
+        setCurrentIndex(testimonials.length - 1);
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [isInView]);
+
+  // 3. Navigation bounded by the first and last card
+  const nextSlide = () => {
+    setCurrentIndex((prev) => Math.min(prev + 1, testimonials.length - 1));
+  };
+  
+  const prevSlide = () => {
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
+
+  // Determine if we've already scrolled as far right as possible
+  const isAtEnd = currentIndex === testimonials.length - 1 || (currentIndex * 335.424) >= maxScroll;
 
   // =========================================
   // HEADING VARIANTS
@@ -92,17 +117,15 @@ export default function FounderTestimonial() {
   };
 
   return (
-    <section className="flex flex-col overflow-hidden bg-white pt-[clamp(50px,8vw,100px)]">
+    <section ref={sectionRef} className="flex flex-col overflow-hidden bg-white pt-[clamp(50px,8vw,100px)]">
       {/* Top Header Row */}
-      <div className="mx-auto mb-10 flex w-full max-w-[1280px] flex-col items-start justify-between gap-6 px-5 md:mb-16 md:flex-row md:items-end md:px-10">
-        
+      <div className="mx-auto mb-10 flex w-full max-w-[1440px] flex-col items-start justify-between gap-6 px-5 md:mb-16 md:flex-row md:items-end md:px-10">   
         <motion.div 
           className="flex flex-col items-start gap-1 md:gap-2"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
-          {/* STEP 1: Top text slides up (Normal font-style) */}
           <motion.h2 
             className="m-0 font-['Libre_Baskerville',_serif] text-[clamp(40px,6vw,80px)] font-semibold leading-[1.2] text-[#001A4D]" 
             variants={text1Variants}
@@ -110,13 +133,11 @@ export default function FounderTestimonial() {
             What our
           </motion.h2>
           
-          {/* STEP 2: Bottom text slides up (Italicized) */}
           <motion.h2 
             className="m-0 font-['Libre_Baskerville',_serif] text-[clamp(40px,6vw,80px)] font-semibold italic leading-[1.2] text-[#001A4D]" 
             variants={text2Variants}
           >
             <span className="relative inline-block overflow-hidden px-2 md:px-4" style={{ background: "transparent" }}>
-              {/* STEP 3: The Blue Highlight sweeps */}
               <motion.span
                 className="absolute inset-0 z-0 bg-[#D3E2FF]"
                 style={{ transformOrigin: "left" }}
@@ -131,8 +152,9 @@ export default function FounderTestimonial() {
         <div className="flex items-center gap-4 md:mb-4">
           <button 
             onClick={prevSlide}
-            className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full border-none bg-[#D3E2FF] transition hover:opacity-80 md:h-[77px] md:w-[77px]"
+            className={`flex h-[60px] w-[60px] items-center justify-center rounded-full border-none transition md:h-[77px] md:w-[77px] ${currentIndex === 0 ? "bg-[#E5EEFF] opacity-50 cursor-not-allowed" : "bg-[#D3E2FF] cursor-pointer hover:opacity-80"}`}
             aria-label="Previous slide"
+            disabled={currentIndex === 0}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 md:h-auto md:w-auto" width="59" height="59" viewBox="0 0 59 59" fill="none">
               <path d="M27.1151 20.9695C27.2962 20.8007 27.4415 20.5972 27.5423 20.371C27.6431 20.1448 27.6973 19.9007 27.7016 19.6531C27.706 19.4056 27.6605 19.1597 27.5677 18.9301C27.475 18.7005 27.337 18.492 27.1619 18.3169C26.9868 18.1418 26.7783 18.0038 26.5487 17.911C26.3191 17.8183 26.0732 17.7728 25.8256 17.7771C25.5781 17.7815 25.3339 17.8357 25.1078 17.9365C24.8816 18.0372 24.6781 18.1825 24.5093 18.3637L14.6759 28.197C14.3307 28.5427 14.1367 29.0113 14.1367 29.4999C14.1367 29.9885 14.3307 30.4571 14.6759 30.8028L24.5093 40.6362C24.6781 40.8173 24.8816 40.9626 25.1078 41.0634C25.3339 41.1642 25.5781 41.2183 25.8256 41.2227C26.0732 41.2271 26.3191 41.1815 26.5487 41.0888C26.7783 40.9961 26.9868 40.8581 27.1619 40.683C27.337 40.5079 27.475 40.2994 27.5677 40.0698C27.6605 39.8402 27.706 39.5943 27.7016 39.3467C27.6973 39.0992 27.6431 38.855 27.5423 38.6289C27.4415 38.4027 27.2962 38.1991 27.1151 38.0303L20.4284 31.3437H44.2497C44.7387 31.3437 45.2076 31.1494 45.5534 30.8037C45.8992 30.4579 46.0934 29.9889 46.0934 29.4999C46.0934 29.0109 45.8992 28.542 45.5534 28.1962C45.2076 27.8504 44.7387 27.6562 44.2497 27.6562H20.4284L27.1151 20.9695Z" fill="black"/>
@@ -141,8 +163,9 @@ export default function FounderTestimonial() {
           
           <button 
             onClick={nextSlide}
-            className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full border-none bg-[#D3E2FF] transition hover:opacity-80 md:h-[77px] md:w-[77px]"
+            className={`flex h-[60px] w-[60px] items-center justify-center rounded-full border-none transition md:h-[77px] md:w-[77px] ${isAtEnd ? "bg-[#E5EEFF] opacity-50 cursor-not-allowed" : "bg-[#D3E2FF] cursor-pointer hover:opacity-80"}`}
             aria-label="Next slide"
+            disabled={isAtEnd}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 rotate-180 md:h-auto md:w-auto" width="59" height="59" viewBox="0 0 59 59" fill="none">
               <path d="M27.1151 20.9695C27.2962 20.8007 27.4415 20.5972 27.5423 20.371C27.6431 20.1448 27.6973 19.9007 27.7016 19.6531C27.706 19.4056 27.6605 19.1597 27.5677 18.9301C27.475 18.7005 27.337 18.492 27.1619 18.3169C26.9868 18.1418 26.7783 18.0038 26.5487 17.911C26.3191 17.8183 26.0732 17.7728 25.8256 17.7771C25.5781 17.7815 25.3339 17.8357 25.1078 17.9365C24.8816 18.0372 24.6781 18.1825 24.5093 18.3637L14.6759 28.197C14.3307 28.5427 14.1367 29.0113 14.1367 29.4999C14.1367 29.9885 14.3307 30.4571 14.6759 30.8028L24.5093 40.6362C24.6781 40.8173 24.8816 40.9626 25.1078 41.0634C25.3339 41.1642 25.5781 41.2183 25.8256 41.2227C26.0732 41.2271 26.3191 41.1815 26.5487 41.0888C26.7783 40.9961 26.9868 40.8581 27.1619 40.683C27.337 40.5079 27.475 40.2994 27.5677 40.0698C27.6605 39.8402 27.706 39.5943 27.7016 39.3467C27.6973 39.0992 27.6431 38.855 27.5423 38.6289C27.4415 38.4027 27.2962 38.1991 27.1151 38.0303L20.4284 31.3437H44.2497C44.7387 31.3437 45.2076 31.1494 45.5534 30.8037C45.8992 30.4579 46.0934 29.9889 46.0934 29.4999C46.0934 29.0109 45.8992 28.542 45.5534 28.1962C45.2076 27.8504 44.7387 27.6562 44.2497 27.6562H20.4284L27.1151 20.9695Z" fill="black"/>
@@ -154,27 +177,30 @@ export default function FounderTestimonial() {
       {/* =========================================
           AUTO-CAROUSEL TRACK WITH 3D FLIP CARDS
           ========================================= */}
-      <div className="w-full overflow-hidden px-5 pb-10 md:px-10 lg:px-[calc((100vw-1280px)/2+40px)]">
+      <div 
+        ref={containerRef}
+        className="mx-auto w-full max-w-[1440px] px-5 pb-10 md:px-10 overflow-visible"
+      >
         <motion.div 
+          ref={trackRef}
           className="flex w-max gap-6"
-          animate={{ x: -(currentIndex * 335.424) }}
+          animate={{ x: -Math.min(currentIndex * 335.424, maxScroll) }}
           transition={{ type: "spring", stiffness: 200, damping: 25 }}
         >
           {testimonials.map((item) => {
-            const isFlipped = flippedCardId === item.id;
-
             return (
-              // Perspective wrapper for the 3D flip effect
               <div 
                 key={item.id} 
                 className="relative h-[370.703px] w-[311.424px] shrink-0" 
                 style={{ perspective: "1000px" }}
               >
                 <motion.div
-                  className="relative h-full w-full"
+                  className="relative h-full w-full cursor-pointer"
                   style={{ transformStyle: "preserve-3d" }}
-                  animate={{ rotateY: isFlipped ? 180 : 0 }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
+                  initial={{ rotateY: 0 }}
+                  whileHover={{ rotateY: 180 }}
+                  whileTap={{ rotateY: 180 }}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
                 >
                   
                   {/* --- FRONT SIDE (IMAGE) --- */}
@@ -189,10 +215,14 @@ export default function FounderTestimonial() {
                       sizes="311px"
                       className="object-cover"
                     />
-                    {/* Exact Gradient overlay requested */}
-                    <div className="absolute inset-0 z-[5] mix-blend-multiply" />
+                    <div 
+                      className="absolute inset-0 z-[5]" 
+                      style={{ 
+                        background: "linear-gradient(180deg, rgba(217, 217, 217, 0.00) 0.05%, #000 99.95%)",
+                        mixBlendMode: "multiply"
+                      }}
+                    />
                     
-                    {/* Content positioned above the gradient */}
                     <div className="relative z-10 flex flex-col p-6 drop-shadow-md">
                       <p className="m-0 font-['Libre_Baskerville',_serif] text-xl font-bold text-white">{item.name}</p>
                       <p className="m-0 mt-1 font-['Poppins',_sans-serif] text-[13px] font-light text-white">{item.role}</p>
@@ -204,7 +234,6 @@ export default function FounderTestimonial() {
                     className="absolute inset-0 flex h-full w-full flex-col justify-between overflow-hidden rounded-[12px] bg-[#C8DBFF] p-6 shadow-lg"
                     style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
                   >
-                    {/* Scaled text down slightly and tightened leading so longer quotes fit gracefully */}
                     <p className="m-0 font-['Inter',_sans-serif] text-[12px] font-medium leading-[1.6] text-[#001A4D]">
                       {item.text}
                     </p>
@@ -232,9 +261,8 @@ export default function FounderTestimonial() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
-          {/* STEP 1: Text slides up (Now with italic and text-center applied) */}
           <motion.h2 
-            className="m-0 text-center font-['Libre_Baskerville',_serif] text-[clamp(40px,6vw,80px)] font-semibold italic leading-[1.2] text-[#001A4D]" 
+            className="m-0 text-center font-['Libre_Baskerville',_serif] text-[clamp(40px,6vw,80px)] font-bold italic leading-[1.19] text-[#001A4D]" 
             variants={{
               hidden: { opacity: 0, y: 40 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
@@ -253,9 +281,8 @@ export default function FounderTestimonial() {
             </span>
           </motion.h2>
           
-          {/* STEP 2: Bottom text slides up (Normal font style, 600 weight) */}
           <motion.h2 
-            className="m-0 mt-2 w-full max-w-[858px] text-center font-['Libre_Baskerville',_serif] text-[clamp(40px,6vw,80px)] font-semibold leading-[1.2] text-[#001A4D]" 
+            className="m-0 mt-2 w-full max-w-[699px] text-center font-['Libre_Baskerville',_serif] text-[clamp(40px,6vw,80px)] font-bold leading-[1.19] text-[#001A4D]" 
             variants={{
               hidden: { opacity: 0, y: 40 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: 1.1 } }
@@ -265,9 +292,15 @@ export default function FounderTestimonial() {
           </motion.h2>
         </motion.div>
 
-        <button className="flex h-[70px] w-full max-w-[379px] cursor-pointer items-center justify-center rounded-xl border-none bg-[#001A4D] px-4 font-['Libre_Baskerville',_serif] text-[clamp(24px,3vw,32px)] font-semibold leading-[1.07] text-[#F5F0E8] transition hover:opacity-90 md:h-[90px]">
-          Get Investment Now
-        </button>
+        <Link 
+          href="/get-investment" 
+          className="group relative m-0 flex h-[54px] w-[221px] shrink-0 items-center justify-center gap-[10px] overflow-hidden rounded-[9px] bg-[#001A4D] p-[10px] font-['Libre_Baskerville',_serif] text-[16px] font-semibold leading-[107%] text-[#F5F0E8] transition-all"
+        >
+          {/* Smooth transition hover gradient using standard circle syntax to prevent warping */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_40%,#003CB3_0%,#012469_50%,#001A4D_100%)] opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100" />
+          
+          <span className="relative z-10">Get Investment</span>
+        </Link>
       </div>
     </section>
   );

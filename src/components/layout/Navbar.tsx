@@ -35,7 +35,9 @@ const menuData = [
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
+  
+  // Defaulting to "for-founders" so the sub-menu is populated immediately on desktop
+  const [activeSubMenu, setActiveSubMenu] = useState<string | null>("for-founders");
 
   // Lock body scroll when the full-screen menu is open
   useEffect(() => {
@@ -43,7 +45,6 @@ export default function Navbar() {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
-      setActiveSubMenu(null); // Reset sub-menu when main menu closes
     }
     return () => {
       document.body.style.overflow = "auto";
@@ -53,7 +54,7 @@ export default function Navbar() {
   return (
     <>
       {/* =========================================
-          MAIN TOP NAVBAR
+          MAIN TOP NAVBAR (Closed State)
           ========================================= */}
       <nav className="fixed left-0 top-0 z-[40] flex h-[77px] w-full items-center justify-between bg-[linear-gradient(90deg,#001A4D_0%,#001A4D_58.17%,#003C82_74.52%,#06C_89.42%,#001A4D_100%)] px-4 md:px-[62px]">
         
@@ -81,119 +82,139 @@ export default function Navbar() {
           />
         </Link>
 
+        {/* HOVER-ACTIVATED LIGHT GRADIENT */}
         <Link
           href="/get-investment"
-          className="flex h-[40px] w-auto shrink-0 items-center justify-center gap-[10px] rounded-[9px] bg-white px-[16px] text-center font-['Libre_Baskerville',_serif] text-[14px] font-semibold leading-[107%] text-[#001A4D] transition-opacity hover:opacity-90 md:h-[47px] md:w-[187px] md:p-[10px] md:text-[16px]"
+          className="group relative flex h-[40px] w-auto shrink-0 items-center justify-center gap-[10px] overflow-hidden rounded-[9px] bg-white px-[16px] text-center font-['Libre_Baskerville',_serif] text-[14px] font-semibold leading-[107%] text-[#001A4D] md:h-[47px] md:w-[187px] md:p-[10px] md:text-[16px]"
         >
-          Get Investment
+          {/* The gradient layer (Invisible by default, fades in on hover) */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_50%,#D6E4FF_0%,#FFFFFF_55%)] opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100" />
+          
+          <span className="relative z-10">Get Investment</span>
         </Link>
       </nav>
 
       {/* =========================================
-          SIDEBAR OVERLAY & MENU SYSTEM
+          FULL-SCREEN MENU OVERLAY (Open State)
           ========================================= */}
-      
-      {/* Background Dark Overlay */}
       <div
-        className={`fixed inset-0 z-[45] bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
-          isMenuOpen ? "visible opacity-100" : "invisible opacity-0"
-        }`}
-        onClick={() => setIsMenuOpen(false)}
-      />
-
-      {/* Sliding Navigation Container */}
-      <div
-        className={`fixed left-0 top-0 z-[50] flex h-screen transition-transform duration-500 ease-in-out ${
+        className={`fixed inset-0 z-[50] flex transition-transform duration-500 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* --- MAIN MENU PANEL --- */}
-        {/* Adjusted padding to the inner elements so hover highlights bleed to the edges */}
-        <div className="relative z-20 flex h-full w-[85vw] max-w-[578px] flex-col overflow-y-auto bg-[#001A4D] py-10 md:pb-[98px] md:pt-[41px]">
+        {/* Menu Container: Max width matches the combined width of Left (578px) + Right (473px) panels = 1051px */}
+        <div className="relative z-10 flex h-full w-full max-w-[1051px] flex-col shadow-2xl">
           
-          {/* Top Controls (Back Button & Home) */}
-          <div className="mb-[54px] flex flex-col items-start gap-8 px-6 md:px-[36px]">
+          {/* INNER NAVBAR: Constrained exactly to the 1051px container */}
+          <div className="flex h-[77px] w-full shrink-0 items-center justify-between bg-[#001A4D] px-6 md:px-[62px]">
+            {/* Back Button */}
             <button
               onClick={() => setIsMenuOpen(false)}
               className="cursor-pointer transition-opacity hover:opacity-70"
               aria-label="Close Menu"
             >
-              {/* Back Button SVG matching Screenshot */}
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10" />
-                <path d="M14 16l-4-4 4-4" />
+                <path d="M14 16l-4-4 4-4" fill="white" />
               </svg>
             </button>
 
-            <Link
-              href="/"
-              onClick={() => setIsMenuOpen(false)}
-              className="font-['Libre_Baskerville',_serif] text-[18px] font-medium tracking-wide text-white transition-opacity hover:opacity-80"
-            >
-              HOME
-            </Link>
+            {/* Titan Capital Logo on the right side of the constrained nav */}
+            <Image
+              src="/images/logos/titancapitallogo.svg"
+              alt="Titan Capital"
+              width={127}
+              height={42}
+              className="h-[33px] w-[100px] object-cover brightness-0 invert md:h-[42px] md:w-[127px]"
+            />
           </div>
 
-          {/* Menu Categories List */}
-          <div className="flex w-full flex-col gap-2">
-            {menuData.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveSubMenu(item.id === activeSubMenu ? null : item.id)}
-                className={`flex w-full cursor-pointer items-center justify-between px-6 py-5 transition-colors duration-200 md:px-[36px] md:py-6 ${
-                  activeSubMenu === item.id ? "bg-[#002868]" : "hover:bg-[#002868]/40"
-                }`}
-              >
-                <span className="font-['Libre_Baskerville',_serif] text-[clamp(32px,4vw,40px)] font-medium leading-[120%] text-white">
-                  {item.title}
-                </span>
-                
-                {/* Right Chevron SVG */}
-                <svg width="14" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 18l6-6-6-6" />
-                </svg>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* --- SUB-MENU PANEL --- */}
-        {/* Positioned absolutely so it hides *under* the main menu when closed, 
-            and slides out to the right (desktop) or covers (mobile) when active */}
-        <div
-          className={`absolute left-0 top-0 -z-10 flex h-full w-[85vw] max-w-[473px] flex-col overflow-y-auto bg-[#FBF7F0] px-8 py-10 transition-transform duration-500 ease-in-out md:left-full md:px-[40px] md:py-[180px] ${
-            activeSubMenu 
-              ? "translate-x-0 md:translate-x-0" 
-              : "-translate-x-full md:-translate-x-full"
-          }`}
-        >
-          {/* Mobile-only "Back to Main Menu" button */}
-          <button
-            className="mb-10 flex cursor-pointer items-center gap-2 font-['Poppins',_sans-serif] font-medium text-[#001A4D] md:hidden"
-            onClick={() => setActiveSubMenu(null)}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-            Back to Categories
-          </button>
-
-          {/* Sub Menu Links */}
-          <div className="flex flex-col items-start gap-[20px]">
-            {menuData
-              .find((m) => m.id === activeSubMenu)
-              ?.subItems.map((subItem, idx) => (
+          {/* MENU BODY: Left Panel & Right Panel */}
+          <div className="relative flex flex-1 w-full overflow-hidden bg-transparent">
+            
+            {/* --- LEFT PANEL: Categories (578px) --- */}
+            <div className="flex h-full w-full flex-col overflow-y-auto bg-[#001A4D] pt-4 md:w-[578px] md:pt-[20px] pb-[98px]">
+              <div className="mb-[20px] px-6 md:px-[36px]">
                 <Link
-                  key={idx}
-                  href={`/${subItem.toLowerCase().replace(/\s+/g, "-")}`} // Basic URL formatting
+                  href="/"
                   onClick={() => setIsMenuOpen(false)}
-                  className="font-['Poppins',_sans-serif] text-[18px] text-[#222] transition-colors hover:font-medium hover:text-[#001A4D]"
+                  className="font-['Libre_Baskerville',_serif] text-[16px] font-medium tracking-wide text-white transition-opacity hover:opacity-80"
                 >
-                  {subItem}
+                  HOME
                 </Link>
-              ))}
+              </div>
+
+              <div className="flex w-full flex-col">
+                {menuData.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveSubMenu(item.id === activeSubMenu ? null : item.id)}
+                    className={`flex w-full cursor-pointer items-center justify-between px-6 py-[16px] transition-colors duration-200 md:px-[36px] ${
+                      activeSubMenu === item.id ? "bg-[#002868]" : "hover:bg-[#002868]/40"
+                    }`}
+                  >
+                    <span className="font-['Libre_Baskerville',_serif] text-[clamp(28px,3vw,36px)] font-medium leading-[150%] text-white">
+                      {item.title}
+                    </span>
+                    
+                    <svg width="12" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* --- RIGHT PANEL: Subcategories (473px) --- */}
+            <div
+              className={`absolute left-0 top-0 flex h-full w-full flex-col overflow-y-auto bg-[#FBF7F0] transition-transform duration-500 ease-in-out md:relative md:w-[473px] ${
+                activeSubMenu 
+                  ? "translate-x-0 md:translate-x-0" 
+                  : "translate-x-full md:translate-x-full"
+              }`}
+            >
+              <button
+                className="mb-8 mt-6 flex cursor-pointer items-center gap-2 px-8 font-['Poppins',_sans-serif] font-medium text-[#001A4D] md:hidden"
+                onClick={() => setActiveSubMenu(null)}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+                Back to Categories
+              </button>
+
+              <div className="flex flex-col items-start gap-[20px] px-8 pt-4 md:px-[40px] md:pt-[60px]">
+                {menuData
+                  .find((m) => m.id === activeSubMenu)
+                  ?.subItems.map((subItem, idx) => (
+                    <Link
+                      key={idx}
+                      href={`/${subItem.toLowerCase().replace(/\s+/g, "-")}`}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="font-['Poppins',_sans-serif] text-[24px] font-normal leading-[150%] text-[#0E0E0E] transition-colors hover:text-[#001A4D]"
+                    >
+                      {subItem}
+                    </Link>
+                  ))}
+              </div>
+            </div>
+            
           </div>
         </div>
+
+        {/* --- BLURRY BACKDROP OVERLAY --- */}
+        {/* Fills the remaining right side of the screen on ultra-wide desktop monitors */}
+        <div 
+          className="hidden h-full flex-1 md:block bg-black/40 backdrop-blur-sm cursor-pointer transition-opacity" 
+          onClick={() => setIsMenuOpen(false)} 
+          aria-label="Close menu by clicking outside"
+        />
+
+        {/* Mobile-only backdrop (just in case) */}
+        <div 
+          className="absolute inset-0 -z-10 bg-black/40 backdrop-blur-sm md:hidden" 
+          onClick={() => setIsMenuOpen(false)} 
+        />
       </div>
     </>
   );

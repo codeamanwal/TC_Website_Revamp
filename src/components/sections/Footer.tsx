@@ -38,19 +38,19 @@ export default function Footer() {
             <p className="font-poppins text-[14px] font-normal text-[#0E0E0E]">
               M3M Urbana, Sector 67, Gurugram, India
             </p>
-            {/* Social Icons */}
+            {/* Social Icons - Added zoom animation */}
             <div className="flex items-center gap-4">
-              <Link href="#" className="transition hover:opacity-70">
+              <Link href="#" className="inline-block transition-transform duration-300 hover:scale-110 hover:opacity-70">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="#0E0E0E" xmlns="http://www.w3.org/2000/svg">
                   <path d="M20.447 20.452H16.89V14.881C16.89 13.554 16.865 11.848 15.088 11.848C13.285 11.848 13.009 13.255 13.009 14.786V20.452H9.453V8.997H12.87V10.56H12.918C13.395 9.654 14.563 8.685 16.291 8.685C19.897 8.685 20.447 11.056 20.447 14.169V20.452ZM5.337 7.433C4.196 7.433 3.272 6.505 3.272 5.369C3.272 4.233 4.196 3.305 5.337 3.305C6.476 3.305 7.4 4.233 7.4 5.369C7.4 6.505 6.476 7.433 5.337 7.433ZM7.118 20.452H3.555V8.997H7.118V20.452ZM22.225 0H1.771C0.792 0 0 0.774 0 1.729V22.271C0 23.227 0.792 24 1.771 24H22.222C23.2 24 23.996 23.227 23.996 22.271V1.729C23.996 0.774 23.2 0 22.225 0Z" />
                 </svg>
               </Link>
-              <Link href="#" className="transition hover:opacity-70">
+              <Link href="#" className="inline-block transition-transform duration-300 hover:scale-110 hover:opacity-70">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="#0E0E0E" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18.901 1.153H22.581L14.541 10.339L24 22.846H16.596L10.794 15.263L4.148 22.846H0.466L9.043 13.037L0 1.153H7.593L12.836 8.082L18.901 1.153ZM17.611 20.644H19.65L6.486 3.24H4.309L17.611 20.644Z" />
                 </svg>
               </Link>
-              <Link href="#" className="transition hover:opacity-70">
+              <Link href="#" className="inline-block transition-transform duration-300 hover:scale-110 hover:opacity-70">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0E0E0E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -60,7 +60,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Right: Navigation Links */}
+          {/* Right: Navigation Links - Added zoom animation */}
           <div className="flex gap-[60px]">
             {navLinks.map((section, idx) => (
               <div key={idx} className="flex flex-col items-start gap-4">
@@ -71,7 +71,7 @@ export default function Footer() {
                   <ul className="flex flex-col gap-3">
                     {section.links.map((link, linkIdx) => (
                       <li key={linkIdx}>
-                        <Link href="#" className="font-poppins text-[14px] font-normal leading-[1.5] text-[#0E0E0E] transition hover:text-[#001A4D]">
+                        <Link href="#" className="inline-block font-poppins text-[14px] font-normal leading-[1.5] text-[#0E0E0E] transition-all duration-300 hover:scale-105 hover:text-[#001A4D]">
                           {link}
                         </Link>
                       </li>
@@ -95,7 +95,7 @@ export default function Footer() {
           </p>
           <a 
             href="mailto:startups@titancapital.vc" 
-            className="font-poppins text-[46px] font-semibold text-[#111] transition hover:opacity-70"
+            className="inline-block font-poppins text-[46px] font-semibold text-[#111] transition-transform duration-300 hover:scale-105 hover:opacity-70"
           >
             startups@titancapital.vc
           </a>
@@ -104,19 +104,27 @@ export default function Footer() {
         {/* =========================================
             DIVIDER LINE
             ========================================= */}
-        <div className="mb-6 h-[1px] w-full bg-[#B2B2B2] opacity-50"></div>
+        <div className="mb-6 h-[1px] w-full bg-black opacity-50"></div>
 
         {/* =========================================
             BOTTOM SECTION: Copyright & Links
-            FIX: Added mb-[150px] to push this entire block safely ABOVE the watermark!
             ========================================= */}
-        <div className="mb-[150px] flex w-full justify-between font-poppins text-[24px] font-normal leading-[1.5] text-[#001A4D]">
-          <p>© 2026 Titan Capital. All rights reserved.</p>
+        <div className="mb-[150px] flex w-full items-center justify-between">
+          <p className="font-poppins text-[24px] font-normal leading-[1.5] text-[#001A4D]">
+            © 2026 Titan Capital. All rights reserved.
+          </p>
           <div className="flex gap-10">
-            <Link href="#" className="underline decoration-1 underline-offset-4 transition hover:opacity-70">
+            {/* Added exact Figma styling and zoom animation */}
+            <Link 
+              href="#" 
+              className="inline-block font-poppins text-[16px] font-normal leading-[1.5] text-[#0E0E0E] underline decoration-solid transition-transform duration-300 hover:scale-105 hover:opacity-70"
+            >
               Privacy Policy
             </Link>
-            <Link href="#" className="underline decoration-1 underline-offset-4 transition hover:opacity-70">
+            <Link 
+              href="#" 
+              className="inline-block font-poppins text-[16px] font-normal leading-[1.5] text-[#0E0E0E] underline decoration-solid transition-transform duration-300 hover:scale-105 hover:opacity-70"
+            >
               Terms and Conditions
             </Link>
           </div>
@@ -126,10 +134,10 @@ export default function Footer() {
 
       {/* =========================================
           GIANT WATERMARK
-          Absolutely positioned at the very bottom
+          Adjusted bottom margin to sit flush with bottom screen edge
           ========================================= */}
-      <div className="pointer-events-none absolute bottom-[-40px] flex w-full justify-center overflow-hidden">
-        <h1 className="select-none text-center font-poppins text-[150px] font-bold leading-[1.502] tracking-[22.5px] bg-[linear-gradient(0deg,#DBDBDB_26.78%,#EBEBEB_70.55%)] bg-clip-text text-transparent">
+      <div className="pointer-events-none absolute bottom-[-55px] flex w-full self-stretch justify-center overflow-hidden">
+        <h1 className="w-full select-none text-center font-poppins text-[150px] font-bold leading-[1.502] tracking-[22.5px] bg-[linear-gradient(0deg,#DBDBDB_26.78%,#EBEBEB_70.55%)] bg-clip-text text-transparent">
           TITAN CAPITAL
         </h1>
       </div>

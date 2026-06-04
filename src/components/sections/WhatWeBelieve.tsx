@@ -68,16 +68,14 @@ export default function WhatWeBelieve() {
   };
 
   return (
-    <section className="relative flex flex-col items-center w-full min-h-[100dvh] xl:min-h-max xl:h-[763px] pt-[80px] xl:pt-[88px] px-4 xl:px-[83px] pb-[60px] xl:pb-[67px] gap-[30px] xl:gap-[48px] bg-[#FBF7F0] overflow-hidden m-0">
+    <section className="relative m-0 flex min-h-[100dvh] w-full flex-col items-center overflow-hidden bg-[#FBF7F0] px-4 pb-[60px] pt-[80px] xl:h-[763px] xl:min-h-max xl:px-[83px] xl:pb-[67px] xl:pt-[88px] gap-[30px] xl:gap-[48px]">
       
      {/* =========================================
           STRICT 1-2-3 ANIMATED HEADING
           ========================================= */}
-      <div className="flex flex-wrap justify-center items-center gap-x-3 md:gap-x-4 text-center z-20">
-        
-        {/* STEP 1: "What" slides up */}
+      <div className="z-20 flex flex-wrap items-center justify-center gap-x-3 text-center md:gap-x-4">
         <motion.span 
-          className="text-[#001A4D] font-libre text-[40px] md:text-[80px] font-semibold leading-[120%]" 
+          className="m-0 font-['Libre_Baskerville',_serif] text-[40px] font-semibold leading-[120%] text-[#001A4D] md:text-[80px]" 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.8 }}
@@ -86,7 +84,6 @@ export default function WhatWeBelieve() {
           What
         </motion.span>
         
-        {/* STEP 2: The Text Container slides in */}
         <motion.span 
           className="relative inline-flex items-center justify-center overflow-hidden bg-transparent px-2 md:px-4" 
           initial={{ opacity: 0, x: -80 }}
@@ -94,9 +91,8 @@ export default function WhatWeBelieve() {
           viewport={{ once: true, amount: 0.8 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.6 }}
         >
-          {/* STEP 3: The Blue Highlight sweeps */}
           <motion.span
-            className="absolute inset-0 bg-[#D3E2FF] z-0"
+            className="absolute inset-0 z-0 bg-[#D3E2FF]"
             initial={{ scaleX: 0 }} 
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true, amount: 0.8 }}
@@ -104,7 +100,7 @@ export default function WhatWeBelieve() {
             style={{ transformOrigin: "left" }} 
           />
           
-          <span className="relative z-10 text-[#001A4D] font-libre text-[40px] md:text-[80px] italic font-semibold leading-[120%]">
+          <span className="relative z-10 font-['Libre_Baskerville',_serif] text-[40px] font-semibold italic leading-[120%] text-[#001A4D] md:text-[80px]">
             We believe
           </span>
         </motion.span>
@@ -114,15 +110,15 @@ export default function WhatWeBelieve() {
           ANIMATED CARDS FAN-OUT SEQUENCE
           ========================================= */}
       <motion.div 
-        className="relative flex flex-col lg:flex-row items-center justify-center gap-[24px] w-full max-w-[1050px] mx-auto z-10"
+        className="relative z-10 mx-auto flex w-full max-w-[1080px] flex-col items-center justify-center gap-[24px] lg:flex-row"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
         {beliefs.map((belief, i) => (
           <motion.div 
-            // THE FIX: Strict max-width and aspect ratio locks the HTML container to the image shape.
-            className="relative flex flex-col justify-center items-center w-full max-w-[313px] aspect-[16/23] shrink-0" 
+            // 323px Max Width (10px wider as requested)
+            className="relative flex aspect-[16/23] w-full max-w-[323px] shrink-0 flex-col items-center justify-center" 
             key={i}
             variants={getCardVariants(i)}
           >
@@ -130,25 +126,28 @@ export default function WhatWeBelieve() {
               src="/images/misc/borderedcard.svg"
               alt="Card Border"
               fill
-              className="object-contain pointer-events-none"
-              sizes="(max-width: 768px) 100vw, 313px"
+              className="pointer-events-none object-contain"
+              sizes="(max-width: 768px) 100vw, 323px"
               priority
             />
             
-            {/* THE INNER CONTAINER:
-              absolute inset-0 forces it to map exactly to the 313x450 boundary.
-              px-[32px] prevents the text from ever touching the drawn SVG borders.
-            */}
             <motion.div 
-              className="absolute inset-0 flex flex-col justify-center text-left px-[28px] md:px-[32px] py-[40px] z-10"
+              // Replaced gap-[13px] with fluid gap-[5.3%]
+              className="absolute left-[14.05%] top-[25.55%] z-10 flex w-[77.95%] flex-col items-start gap-[5.3%] text-left"
               variants={textVariants}
             >
-              <h3 className="text-[#001A4D] font-libre text-[20px] md:text-[24px] font-semibold leading-[155%] not-italic m-0">
+              {/* TEXT FIXED AT 24PX - Replaced pl-[10px] with fluid pl-[4.1%] */}
+              <h3 className="m-0 self-stretch shrink-0 pl-[4.1%] font-['Libre_Baskerville',_serif] text-[24px] font-semibold not-italic leading-[155%] text-[#001A4D]">
                 {belief.title}
               </h3>
-              <p className="text-[#323232] font-poppins text-[12px] md:text-[14px] font-normal leading-[140%] mt-[12px] md:mt-[16px] m-0">
-                {belief.description}
-              </p>
+              
+              {/* Replaced p-[10px] with fluid p-[4.1%] */}
+              <div className="flex w-[89.7%] items-center justify-center p-[4.1%]">
+                {/* TEXT FIXED AT 14PX */}
+                <p className="m-0 flex-1 font-['Poppins',_sans-serif] text-[14px] font-normal leading-[140%] text-[#323232]">
+                  {belief.description}
+                </p>
+              </div>
             </motion.div>
           </motion.div>
         ))}
