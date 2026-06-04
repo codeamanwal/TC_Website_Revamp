@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# raw asset folders
+PORTFOLIO BRANDS LOGO/
+Titan Capital - Corporate Team/
+Titan Capital - Founders/
+Titan Capital - Seed Team/
+Titan Capital - Winner_s Fund/
+Untitled design/
+flowchart.svg
