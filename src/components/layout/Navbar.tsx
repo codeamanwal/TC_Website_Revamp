@@ -35,18 +35,13 @@ const menuData = [
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  // Changed to null so the sub-menu doesn't open until a category is clicked
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
 
-  // Lock body scroll when menu is open
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
-      
-      // Optional: Reset submenu when closing the main menu so it's fresh next time
       const timer = setTimeout(() => setActiveSubMenu(null), 500);
       return () => clearTimeout(timer);
     }
@@ -61,12 +56,13 @@ export default function Navbar() {
       {/* =========================================
           MAIN TOP NAVBAR (Closed State)
           ========================================= */}
-      <nav className="fixed left-0 top-0 z-[40] flex h-[77px] w-full items-center justify-between bg-[linear-gradient(90deg,#001A4D_0%,#001A4D_58.17%,#003C82_74.52%,#06C_89.42%,#001A4D_100%)] px-4 md:px-[62px]">
+      {/* FLUID NAV: Height and padding scale down fluidly on smaller screens */}
+      <nav className="fixed left-0 top-0 z-[40] flex h-[clamp(60px,5.34vw,77px)] w-full items-center justify-between bg-[linear-gradient(90deg,#001A4D_0%,#001A4D_58.17%,#003C82_74.52%,#06C_89.42%,#001A4D_100%)] px-[clamp(16px,4.3vw,62px)]">
         
-        {/* Menu Toggle Button */}
+        {/* FLUID TOGGLE: Button size and padding scale perfectly */}
         <button
           onClick={() => setIsMenuOpen(true)}
-          className="flex h-[41px] w-[41px] shrink-0 cursor-pointer items-center justify-center rounded-full bg-white p-[8px] transition-opacity hover:opacity-90 md:p-[13px]"
+          className="flex h-[clamp(36px,2.84vw,41px)] w-[clamp(36px,2.84vw,41px)] shrink-0 cursor-pointer items-center justify-center rounded-full bg-white p-[clamp(8px,0.9vw,13px)] transition-opacity hover:opacity-90"
           aria-label="Open Menu"
         >
           <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
@@ -77,22 +73,22 @@ export default function Navbar() {
         </button>
 
         <Link href="/" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          {/* FLUID LOGO: Scales proportionately between mobile (100x33) and desktop (127x42) */}
           <Image
             src="/images/logos/titancapitallogo.svg"
             alt="Titan Capital"
             width={127}
             height={42}
             priority
-            className="h-[33px] w-[100px] object-cover brightness-0 invert md:h-[42px] md:w-[127px]"
+            className="h-[clamp(33px,2.91vw,42px)] w-[clamp(100px,8.81vw,127px)] object-cover brightness-0 invert"
           />
         </Link>
 
-        {/* HOVER-ACTIVATED LIGHT GRADIENT */}
+        {/* FLUID CTA BUTTON: Scales padding, font size, and dimensions smoothly */}
         <Link
           href="/get-investment"
-          className="group relative flex h-[40px] w-auto shrink-0 items-center justify-center gap-[10px] overflow-hidden rounded-[9px] bg-white px-[16px] text-center font-['Libre_Baskerville',_serif] text-[14px] font-semibold leading-[107%] text-[#001A4D] md:h-[47px] md:w-[187px] md:p-[10px] md:text-[16px]"
+          className="group relative flex h-[clamp(40px,3.26vw,47px)] w-[clamp(140px,12.98vw,187px)] shrink-0 items-center justify-center gap-[10px] overflow-hidden rounded-[9px] bg-white p-[clamp(8px,0.69vw,10px)] text-center font-['Libre_Baskerville',_serif] text-[clamp(14px,1.11vw,16px)] font-semibold leading-[107%] text-[#001A4D]"
         >
-          {/* The gradient layer (Invisible by default, fades in on hover) */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_50%,#D6E4FF_0%,#FFFFFF_55%)] opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100" />
           <span className="relative z-10">Get Investment</span>
         </Link>
@@ -101,14 +97,11 @@ export default function Navbar() {
      {/* =========================================
           FULL-SCREEN MENU OVERLAY (Open State)
           ========================================= */}
-      {/* 1. Wrapper now ONLY handles pointer events so you can't click through it when closed. */}
       <div
         className={`fixed inset-0 z-[50] flex ${
           isMenuOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
-        {/* 2. GLITCH FIX: The backdrop has its own dedicated transition now. 
-            This forces the browser to smoothly fade the blur and the dark background together. */}
         <div 
           className={`absolute inset-0 bg-black/40 backdrop-blur-sm cursor-pointer transition-opacity duration-500 ease-in-out ${
             isMenuOpen ? "opacity-100" : "opacity-0"
@@ -117,49 +110,46 @@ export default function Navbar() {
           aria-label="Close menu by clicking outside"
         />
 
-        {/* Menu Container */}
         <div 
           className={`relative z-10 flex h-full w-full max-w-[1051px] flex-col shadow-2xl transition-transform duration-500 ease-in-out ${
             isMenuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
           
-          {/* INNER NAVBAR */}
-          <div className="flex h-[77px] w-full shrink-0 items-center justify-between bg-[#001A4D] px-6 md:px-[62px]">
-            {/* Back Button */}
+          {/* FLUID INNER NAVBAR: Mirrors Top Nav measurements */}
+          <div className="flex h-[clamp(60px,5.34vw,77px)] w-full shrink-0 items-center justify-between bg-[#001A4D] px-[clamp(24px,4.3vw,62px)]">
             <button
               onClick={() => setIsMenuOpen(false)}
               className="cursor-pointer transition-opacity hover:opacity-70"
               aria-label="Close Menu"
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="h-[clamp(24px,1.94vw,28px)] w-[clamp(24px,1.94vw,28px)]" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10" />
                 <path d="M14 16l-4-4 4-4" fill="white" />
               </svg>
             </button>
 
-            {/* LOGO CONDITIONAL RENDERING */}
             {activeSubMenu && (
               <Image
                 src="/images/logos/titancapitallogo.svg"
                 alt="Titan Capital"
                 width={127}
                 height={42}
-                className="h-[33px] w-[100px] object-cover brightness-0 invert md:h-[42px] md:w-[127px]"
+                className="h-[clamp(33px,2.91vw,42px)] w-[clamp(100px,8.81vw,127px)] object-cover brightness-0 invert"
               />
             )}
           </div>
 
-          {/* MENU BODY: Left Panel & Right Panel */}
           <div className="relative flex flex-1 w-full overflow-hidden bg-transparent">
             
-            {/* --- LEFT PANEL: Categories (578px) --- */}
-            <div className="flex h-full w-full flex-col overflow-y-auto bg-[#001A4D] pt-4 md:w-[578px] md:pt-[20px] pb-[98px]">
-              <div className="mb-[20px] px-6 md:px-[36px]">
+            {/* --- FLUID LEFT PANEL (Categories) --- */}
+            {/* Width clamps between standard tablet size to exactly 578px on max desktop */}
+            <div className="flex h-full w-full flex-col overflow-y-auto bg-[#001A4D] pt-[clamp(16px,1.38vw,20px)] pb-[clamp(60px,6.8vw,98px)] md:w-[clamp(350px,40.13vw,578px)]">
+              <div className="mb-[clamp(16px,1.38vw,20px)] px-[clamp(24px,2.5vw,36px)]">
                 <Link
                   href="/"
                   onClick={() => setIsMenuOpen(false)}
-                  className="font-['Libre_Baskerville',_serif] text-[16px] font-medium tracking-wide text-white transition-opacity hover:opacity-80"
+                  className="font-['Libre_Baskerville',_serif] text-[clamp(14px,1.11vw,16px)] font-medium tracking-wide text-white transition-opacity hover:opacity-80"
                 >
                   HOME
                 </Link>
@@ -170,11 +160,12 @@ export default function Navbar() {
                   <button
                     key={item.id}
                     onClick={() => setActiveSubMenu(item.id === activeSubMenu ? null : item.id)}
-                    className={`flex w-full cursor-pointer items-center justify-between px-6 py-[16px] transition-colors duration-200 md:px-[36px] ${
+                    className={`flex w-full cursor-pointer items-center justify-between px-[clamp(24px,2.5vw,36px)] py-[clamp(12px,1.11vw,16px)] transition-colors duration-200 ${
                       activeSubMenu === item.id ? "bg-[#002868]" : "hover:bg-[#002868]/40"
                     }`}
                   >
-                    <span className="font-['Libre_Baskerville',_serif] text-[clamp(28px,3vw,36px)] font-medium leading-[150%] text-white">
+                    {/* FLUID TEXT: 36px on large monitors, smoothly scaling down */}
+                    <span className="font-['Libre_Baskerville',_serif] text-[clamp(24px,2.5vw,36px)] font-medium leading-[150%] text-white">
                       {item.title}
                     </span>
                     
@@ -186,16 +177,17 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* --- RIGHT PANEL: Subcategories (473px) --- */}
+            {/* --- FLUID RIGHT PANEL (Subcategories) --- */}
+            {/* Width clamps exactly proportional to your 473px max dimension */}
             <div
-              className={`absolute left-0 top-0 flex h-full w-full flex-col overflow-y-auto bg-[#FBF7F0] transition-transform duration-500 ease-in-out md:relative md:w-[473px] ${
+              className={`absolute left-0 top-0 flex h-full w-full flex-col overflow-y-auto bg-[#FBF7F0] transition-transform duration-500 ease-in-out md:relative md:w-[clamp(250px,32.84vw,473px)] ${
                 activeSubMenu 
                   ? "translate-x-0 md:translate-x-0" 
                   : "translate-x-full md:translate-x-full"
               }`}
             >
               <button
-                className="mb-8 mt-6 flex cursor-pointer items-center gap-2 px-8 font-['Poppins',_sans-serif] font-medium text-[#001A4D] md:hidden"
+                className="mb-[clamp(20px,2vw,32px)] mt-[clamp(16px,1.66vw,24px)] flex cursor-pointer items-center gap-2 px-[clamp(24px,2.77vw,32px)] font-['Poppins',_sans-serif] font-medium text-[#001A4D] md:hidden"
                 onClick={() => setActiveSubMenu(null)}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -204,7 +196,7 @@ export default function Navbar() {
                 Back to Categories
               </button>
 
-              <div className="flex flex-col items-start gap-[20px] px-8 pt-4 md:px-[40px] md:pt-[60px]">
+              <div className="flex flex-col items-start gap-[clamp(12px,1.38vw,20px)] px-[clamp(24px,2.77vw,40px)] pt-[clamp(16px,4.16vw,60px)]">
                 {menuData
                   .find((m) => m.id === activeSubMenu)
                   ?.subItems.map((subItem, idx) => (
@@ -212,7 +204,7 @@ export default function Navbar() {
                       key={idx}
                       href={`/${subItem.toLowerCase().replace(/\s+/g, "-")}`}
                       onClick={() => setIsMenuOpen(false)}
-                      className="font-['Poppins',_sans-serif] text-[24px] font-normal leading-[150%] text-[#0E0E0E] transition-colors hover:text-[#001A4D]"
+                      className="font-['Poppins',_sans-serif] text-[clamp(18px,1.66vw,24px)] font-normal leading-[150%] text-[#0E0E0E] transition-colors hover:text-[#001A4D]"
                     >
                       {subItem}
                     </Link>
