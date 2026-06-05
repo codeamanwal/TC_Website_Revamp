@@ -36,16 +36,21 @@ const menuData = [
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // Defaulting to "for-founders" so the sub-menu is populated immediately on desktop
-  const [activeSubMenu, setActiveSubMenu] = useState<string | null>("for-founders");
+  // Changed to null so the sub-menu doesn't open until a category is clicked
+  const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
 
-  // Lock body scroll when the full-screen menu is open
+  // Lock body scroll when menu is open
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
+      
+      // Optional: Reset submenu when closing the main menu so it's fresh next time
+      const timer = setTimeout(() => setActiveSubMenu(null), 500);
+      return () => clearTimeout(timer);
     }
+    
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -89,23 +94,37 @@ export default function Navbar() {
         >
           {/* The gradient layer (Invisible by default, fades in on hover) */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_50%,#D6E4FF_0%,#FFFFFF_55%)] opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100" />
-          
           <span className="relative z-10">Get Investment</span>
         </Link>
       </nav>
 
-      {/* =========================================
+     {/* =========================================
           FULL-SCREEN MENU OVERLAY (Open State)
           ========================================= */}
+      {/* 1. Wrapper now ONLY handles pointer events so you can't click through it when closed. */}
       <div
-        className={`fixed inset-0 z-[50] flex transition-transform duration-500 ease-in-out ${
-          isMenuOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-0 z-[50] flex ${
+          isMenuOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
-        {/* Menu Container: Max width matches the combined width of Left (578px) + Right (473px) panels = 1051px */}
-        <div className="relative z-10 flex h-full w-full max-w-[1051px] flex-col shadow-2xl">
+        {/* 2. GLITCH FIX: The backdrop has its own dedicated transition now. 
+            This forces the browser to smoothly fade the blur and the dark background together. */}
+        <div 
+          className={`absolute inset-0 bg-black/40 backdrop-blur-sm cursor-pointer transition-opacity duration-500 ease-in-out ${
+            isMenuOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setIsMenuOpen(false)} 
+          aria-label="Close menu by clicking outside"
+        />
+
+        {/* Menu Container */}
+        <div 
+          className={`relative z-10 flex h-full w-full max-w-[1051px] flex-col shadow-2xl transition-transform duration-500 ease-in-out ${
+            isMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
           
-          {/* INNER NAVBAR: Constrained exactly to the 1051px container */}
+          {/* INNER NAVBAR */}
           <div className="flex h-[77px] w-full shrink-0 items-center justify-between bg-[#001A4D] px-6 md:px-[62px]">
             {/* Back Button */}
             <button
@@ -119,14 +138,16 @@ export default function Navbar() {
               </svg>
             </button>
 
-            {/* Titan Capital Logo on the right side of the constrained nav */}
-            <Image
-              src="/images/logos/titancapitallogo.svg"
-              alt="Titan Capital"
-              width={127}
-              height={42}
-              className="h-[33px] w-[100px] object-cover brightness-0 invert md:h-[42px] md:w-[127px]"
-            />
+            {/* LOGO CONDITIONAL RENDERING */}
+            {activeSubMenu && (
+              <Image
+                src="/images/logos/titancapitallogo.svg"
+                alt="Titan Capital"
+                width={127}
+                height={42}
+                className="h-[33px] w-[100px] object-cover brightness-0 invert md:h-[42px] md:w-[127px]"
+              />
+            )}
           </div>
 
           {/* MENU BODY: Left Panel & Right Panel */}
@@ -201,20 +222,6 @@ export default function Navbar() {
             
           </div>
         </div>
-
-        {/* --- BLURRY BACKDROP OVERLAY --- */}
-        {/* Fills the remaining right side of the screen on ultra-wide desktop monitors */}
-        <div 
-          className="hidden h-full flex-1 md:block bg-black/40 backdrop-blur-sm cursor-pointer transition-opacity" 
-          onClick={() => setIsMenuOpen(false)} 
-          aria-label="Close menu by clicking outside"
-        />
-
-        {/* Mobile-only backdrop (just in case) */}
-        <div 
-          className="absolute inset-0 -z-10 bg-black/40 backdrop-blur-sm md:hidden" 
-          onClick={() => setIsMenuOpen(false)} 
-        />
       </div>
     </>
   );
