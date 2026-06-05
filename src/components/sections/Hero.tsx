@@ -34,7 +34,7 @@ export default function Hero() {
       
       <div className="relative flex w-full max-w-[1440px] flex-col items-center">
         
-        {/* FLUID TYPOGRAPHY: Uses 3.33vw and 4.44vw, but caps precisely at your 48px and 64px max limits */}
+        {/* FLUID TYPOGRAPHY */}
         <h1 className="relative z-10 mx-auto w-full max-w-[541px] text-center font-['Libre_Baskerville',_serif] text-[clamp(36px,3.33vw,48px)] font-normal leading-[110%] text-[#000]">
           300+ bets. All on
           <span className="block font-['Libre_Baskerville',_serif] text-[clamp(48px,4.44vw,64px)] font-semibold italic leading-[120%] text-[#001A4D]">
@@ -42,14 +42,13 @@ export default function Hero() {
           </span>
         </h1>
 
-        {/* FLUID MARGIN & TEXT: Gap and font scale down gracefully on laptops */}
         <p className="relative z-10 mx-auto mt-[clamp(6px,0.59vw,8.5px)] mb-[clamp(28px,2.7vw,39px)] w-full max-w-[593px] text-center font-['Poppins',_sans-serif] text-[clamp(14px,1.11vw,16px)] font-normal leading-[150%] text-[#323232]">
           We partner with founders from day one. We invest conviction, not
           just capital, and stay by their side through every stage of the
           journey
         </p>
 
-        {/* FLUID BUTTONS: Width, height, and margins scale slightly, maintaining aspect ratio but locking at 185x54 */}
+        {/* FLUID BUTTONS */}
         <div className="relative z-20 mb-[clamp(30px,2.9vw,42px)] flex flex-col items-center justify-center gap-[clamp(16px,1.66vw,24px)] sm:flex-row">
           <Link 
             href="/portfolio" 
@@ -67,9 +66,13 @@ export default function Hero() {
           </Link>
         </div>
 
-        {/* CARDS: Kept at exact fixed pixels so the 3D Math doesn't break, relies on scrollbar for small screens */}
-        <div className="relative z-0 -mt-[96px] w-full overflow-x-auto px-4 scrollbar-hide lg:overflow-visible lg:px-0">
-          <div className="mx-auto flex min-w-max items-end justify-center gap-[17px]">
+        {/* 
+            FLUID CARDS ROW 
+            Changed from min-w-max to w-full so the flexbox shrinks properly. 
+            The gap is also clamped based on your 17px Figma spec.
+        */}
+        <div className="relative z-0 -mt-[96px] w-full overflow-hidden px-4 lg:overflow-visible lg:px-0">
+          <div className="mx-auto flex w-full items-end justify-center gap-[clamp(8px,1.18vw,17px)]">
             {founderSlots.map((slot, i) => {
               const currentFounder = slot.pool[currentIndices[i]];
               const isLarge = slot.size === "large";
@@ -84,32 +87,35 @@ export default function Hero() {
                       exit={{ rotateY: 90, opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.5, ease: "easeInOut" }}
                       style={{ transformStyle: "preserve-3d" }}
+                      // FLUID CARD CONTAINER: Replaced hardcoded dimensions with exact vw clamps.
                       className={`flex flex-col items-start rounded-[12px] bg-white shadow-[0_4px_14.8px_0_rgba(101,101,101,0.25)] ${
                         isLarge 
-                          ? "h-[386px] w-[278px] gap-[10px] p-[14px_14px_81px_13px]" 
-                          : "h-[294px] w-[240px] gap-[4px] p-[14px_18px_16px_18px]"
+                          ? "h-[clamp(277px,26.8vw,386px)] w-[clamp(200px,19.3vw,278px)] gap-[clamp(7px,0.69vw,10px)] pt-[clamp(10px,0.97vw,14px)] px-[clamp(9px,0.95vw,14px)] pb-[clamp(58px,5.62vw,81px)]" 
+                          : "h-[clamp(208px,20.4vw,294px)] w-[clamp(170px,16.6vw,240px)] gap-[clamp(3px,0.27vw,4px)] pt-[clamp(10px,0.97vw,14px)] px-[clamp(12px,1.25vw,18px)] pb-[clamp(11px,1.11vw,16px)]"
                       }`}
                     >
-                      <div className={`relative shrink-0 overflow-hidden rounded-[5px] ${
-                        isLarge ? "h-[291px] w-[251px]" : "h-[223px] w-[211px]"
+                      {/* FLUID IMAGE CONTAINER: w-full locks it to the new fluid padding, height scales fluidly. */}
+                      <div className={`relative shrink-0 overflow-hidden w-full rounded-[5px] ${
+                        isLarge ? "h-[clamp(206px,20.2vw,291px)]" : "h-[clamp(158px,15.48vw,223px)]"
                       }`}>
                         <Image
                           src={currentFounder.image}
                           alt={currentFounder.name}
                           fill
                           style={{ objectFit: "cover" }}
-                          sizes={isLarge ? "251px" : "211px"}
+                          sizes={isLarge ? "(max-width: 1440px) 19vw, 251px" : "(max-width: 1440px) 15vw, 211px"}
                         />
                       </div>
 
                       <div className="flex flex-col pt-[5px]">
+                        {/* FLUID TEXT: Exact clamp math to match your 20px and 16px font sizes */}
                         <p className={`font-['Libre_Baskerville',_serif] font-bold leading-[119%] text-black ${
-                          isLarge ? "text-[20px]" : "text-[16px]"
+                          isLarge ? "text-[clamp(14px,1.38vw,20px)]" : "text-[clamp(12px,1.11vw,16px)]"
                         }`}>
                           {currentFounder.name}
                         </p>
                         <p className={`mt-[4px] font-['Poppins',_sans-serif] font-light leading-[119%] text-black ${
-                          isLarge ? "text-[12px]" : "text-[12px]"
+                          isLarge ? "text-[clamp(10px,0.83vw,12px)]" : "text-[clamp(10px,0.83vw,12px)]"
                         }`}>
                           {currentFounder.role}
                         </p>
