@@ -66,9 +66,12 @@ export default function Hero() {
           </Link>
         </div>
 
-        {/* CARDS ROW */}
+        {/* 
+            PURE PERCENTAGE CARDS ROW
+            Uses exact calculated vw from the 1440px canvas to scale perfectly linearly.
+        */}
         <div className="relative z-0 -mt-[96px] w-full overflow-hidden px-4 lg:overflow-visible lg:px-0">
-          <div className="mx-auto flex w-full items-end justify-center gap-[clamp(8px,1.18vw,17px)]">
+          <div className="mx-auto flex w-full items-end justify-center gap-[min(1.18vw,17px)]">
             {founderSlots.map((slot, i) => {
               const currentFounder = slot.pool[currentIndices[i]];
               const isLarge = slot.size === "large";
@@ -83,15 +86,13 @@ export default function Hero() {
                       exit={{ rotateY: 90, opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.5, ease: "easeInOut" }}
                       style={{ transformStyle: "preserve-3d" }}
-                      // 1. GAP FIX: Removed the massive 81px bottom padding. Standardized padding allows the fluid aspect ratio to breathe perfectly!
-                      className={`flex flex-col items-start rounded-[12px] bg-white shadow-[0_4px_14.8px_0_rgba(101,101,101,0.25)] ${
+                      className={`flex flex-col items-start bg-white shadow-[0_4px_14.8px_0_rgba(101,101,101,0.25)] rounded-[min(0.83vw,12px)] ${
                         isLarge 
-                          ? "aspect-[278/386] w-[clamp(180px,19.3vw,278px)] gap-[clamp(6px,0.69vw,10px)] p-[clamp(10px,0.97vw,14px)]" 
-                          : "aspect-[240/294] w-[clamp(155px,16.6vw,240px)] gap-[clamp(2px,0.27vw,4px)] p-[clamp(10px,0.97vw,14px)_clamp(12px,1.25vw,18px)]"
+                          ? "aspect-[278/386] w-[min(19.3vw,278px)] gap-[min(0.69vw,10px)] p-[min(0.97vw,14px)]" 
+                          : "aspect-[240/294] w-[min(16.66vw,240px)] gap-[min(0.27vw,4px)] p-[min(0.97vw,14px)_min(1.25vw,18px)]"
                       }`}
                     >
-                      {/* 2. IMAGE FIX: Fluid width + locked aspect ratio perfectly anchors the photo to the top edge. */}
-                      <div className={`relative shrink-0 w-full overflow-hidden rounded-[5px] ${
+                      <div className={`relative shrink-0 w-full overflow-hidden rounded-[min(0.34vw,5px)] ${
                         isLarge ? "aspect-[251/291]" : "aspect-[211/223]"
                       }`}>
                         <Image
@@ -99,18 +100,18 @@ export default function Hero() {
                           alt={currentFounder.name}
                           fill
                           style={{ objectFit: "cover" }}
-                          sizes={isLarge ? "(max-width: 1440px) 19vw, 251px" : "(max-width: 1440px) 15vw, 211px"}
+                          sizes={isLarge ? "(max-width: 1440px) 19.3vw, 251px" : "(max-width: 1440px) 16.66vw, 211px"}
                         />
                       </div>
 
-                      <div className="flex w-full flex-col pt-[clamp(3px,0.34vw,5px)]">
+                      <div className="flex w-full flex-col pt-[min(0.34vw,5px)]">
                         <p className={`w-full font-['Libre_Baskerville',_serif] font-bold leading-[119%] text-black ${
-                          isLarge ? "text-[clamp(13px,1.38vw,20px)]" : "text-[clamp(11px,1.11vw,16px)]"
+                          isLarge ? "text-[min(1.38vw,20px)]" : "text-[min(1.11vw,16px)]"
                         }`}>
                           {currentFounder.name}
                         </p>
-                        <p className={`mt-[clamp(2px,0.27vw,4px)] w-full font-['Poppins',_sans-serif] font-light leading-[119%] text-black ${
-                          isLarge ? "text-[clamp(9px,0.83vw,12px)]" : "text-[clamp(9px,0.83vw,12px)]"
+                        <p className={`mt-[min(0.27vw,4px)] w-full font-['Poppins',_sans-serif] font-light leading-[119%] text-black ${
+                          isLarge ? "text-[min(0.83vw,12px)]" : "text-[min(0.83vw,12px)]"
                         }`}>
                           {currentFounder.role}
                         </p>
@@ -122,7 +123,6 @@ export default function Hero() {
             })}
           </div>
         </div>
-
       </div>
     </section>
   );
