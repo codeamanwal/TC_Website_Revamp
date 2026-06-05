@@ -30,42 +30,44 @@ export default function Hero() {
   }, []);
 
   return (
-    // 1. min-h-[calc(100vh-77px)]: Ensures the section always fills the exact height of the screen (minus the nav bar), hiding whatever is below it.
-    // 2. justify-center: Vertically centers the content if they are on a massive screen.
     <section className="relative mt-[77px] flex min-h-[calc(100vh-77px)] w-full flex-col items-center justify-center overflow-hidden bg-[#FBF7F0] pt-[45.5px] pb-[50px]">
       
       <div className="relative flex w-full max-w-[1440px] flex-col items-center">
         
-        <h1 className="relative z-10 mx-auto w-full max-w-[541px] text-center font-['Libre_Baskerville',_serif] text-[48px] font-normal leading-[110%] text-[#000]">
+        {/* FLUID TYPOGRAPHY: Uses 3.33vw and 4.44vw, but caps precisely at your 48px and 64px max limits */}
+        <h1 className="relative z-10 mx-auto w-full max-w-[541px] text-center font-['Libre_Baskerville',_serif] text-[clamp(36px,3.33vw,48px)] font-normal leading-[110%] text-[#000]">
           300+ bets. All on
-          <span className="block font-['Libre_Baskerville',_serif] text-[64px] font-semibold italic leading-[120%] text-[#001A4D]">
+          <span className="block font-['Libre_Baskerville',_serif] text-[clamp(48px,4.44vw,64px)] font-semibold italic leading-[120%] text-[#001A4D]">
             Founders
           </span>
         </h1>
 
-        <p className="relative z-10 mx-auto mt-[8.5px] mb-[39px] w-full max-w-[593px] text-center font-['Poppins',_sans-serif] text-[16px] font-normal leading-[150%] text-[#323232]">
+        {/* FLUID MARGIN & TEXT: Gap and font scale down gracefully on laptops */}
+        <p className="relative z-10 mx-auto mt-[clamp(6px,0.59vw,8.5px)] mb-[clamp(28px,2.7vw,39px)] w-full max-w-[593px] text-center font-['Poppins',_sans-serif] text-[clamp(14px,1.11vw,16px)] font-normal leading-[150%] text-[#323232]">
           We partner with founders from day one. We invest conviction, not
           just capital, and stay by their side through every stage of the
           journey
         </p>
 
-        <div className="relative z-20 mb-[42px] flex flex-col items-center justify-center gap-[24px] sm:flex-row">
+        {/* FLUID BUTTONS: Width, height, and margins scale slightly, maintaining aspect ratio but locking at 185x54 */}
+        <div className="relative z-20 mb-[clamp(30px,2.9vw,42px)] flex flex-col items-center justify-center gap-[clamp(16px,1.66vw,24px)] sm:flex-row">
           <Link 
             href="/portfolio" 
-            className="flex h-[54px] w-[185px] shrink-0 items-center justify-center p-[10px] font-['Libre_Baskerville',_serif] text-[16px] font-semibold leading-[107%] text-[#001A4D] transition-opacity hover:opacity-60"
+            className="flex h-[clamp(45px,3.75vw,54px)] w-[clamp(160px,12.8vw,185px)] shrink-0 items-center justify-center p-[10px] font-['Libre_Baskerville',_serif] text-[clamp(14px,1.11vw,16px)] font-semibold leading-[107%] text-[#001A4D] transition-opacity hover:opacity-60"
           >
             View Portfolio
           </Link>
           
           <Link 
             href="/get-investment" 
-            className="group relative m-0 flex h-[54px] w-[185px] shrink-0 items-center justify-center gap-[10px] overflow-hidden rounded-[9px] bg-[#001A4D] p-[10px] font-['Libre_Baskerville',_serif] text-[16px] font-semibold leading-[107%] text-[#F5F0E8] transition-all"
+            className="group relative m-0 flex h-[clamp(45px,3.75vw,54px)] w-[clamp(160px,12.8vw,185px)] shrink-0 items-center justify-center gap-[10px] overflow-hidden rounded-[9px] bg-[#001A4D] p-[10px] font-['Libre_Baskerville',_serif] text-[clamp(14px,1.11vw,16px)] font-semibold leading-[107%] text-[#F5F0E8] transition-all"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_40%,#003CB3_0%,#012469_50%,#001A4D_100%)] opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100" />
             <span className="relative z-10">Get Investment</span>
           </Link>
         </div>
 
+        {/* CARDS: Kept at exact fixed pixels so the 3D Math doesn't break, relies on scrollbar for small screens */}
         <div className="relative z-0 -mt-[96px] w-full overflow-x-auto px-4 scrollbar-hide lg:overflow-visible lg:px-0">
           <div className="mx-auto flex min-w-max items-end justify-center gap-[17px]">
             {founderSlots.map((slot, i) => {
