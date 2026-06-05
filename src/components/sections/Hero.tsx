@@ -66,11 +66,7 @@ export default function Hero() {
           </Link>
         </div>
 
-        {/* 
-            FLUID CARDS ROW 
-            Changed from min-w-max to w-full so the flexbox shrinks properly. 
-            The gap is also clamped based on your 17px Figma spec.
-        */}
+        {/* CARDS ROW */}
         <div className="relative z-0 -mt-[96px] w-full overflow-hidden px-4 lg:overflow-visible lg:px-0">
           <div className="mx-auto flex w-full items-end justify-center gap-[clamp(8px,1.18vw,17px)]">
             {founderSlots.map((slot, i) => {
@@ -87,16 +83,16 @@ export default function Hero() {
                       exit={{ rotateY: 90, opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.5, ease: "easeInOut" }}
                       style={{ transformStyle: "preserve-3d" }}
-                      // FLUID CARD CONTAINER: Replaced hardcoded dimensions with exact vw clamps.
+                      // 1. GAP FIX: Removed the massive 81px bottom padding. Standardized padding allows the fluid aspect ratio to breathe perfectly!
                       className={`flex flex-col items-start rounded-[12px] bg-white shadow-[0_4px_14.8px_0_rgba(101,101,101,0.25)] ${
                         isLarge 
-                          ? "h-[clamp(277px,26.8vw,386px)] w-[clamp(200px,19.3vw,278px)] gap-[clamp(7px,0.69vw,10px)] pt-[clamp(10px,0.97vw,14px)] px-[clamp(9px,0.95vw,14px)] pb-[clamp(58px,5.62vw,81px)]" 
-                          : "h-[clamp(208px,20.4vw,294px)] w-[clamp(170px,16.6vw,240px)] gap-[clamp(3px,0.27vw,4px)] pt-[clamp(10px,0.97vw,14px)] px-[clamp(12px,1.25vw,18px)] pb-[clamp(11px,1.11vw,16px)]"
+                          ? "aspect-[278/386] w-[clamp(180px,19.3vw,278px)] gap-[clamp(6px,0.69vw,10px)] p-[clamp(10px,0.97vw,14px)]" 
+                          : "aspect-[240/294] w-[clamp(155px,16.6vw,240px)] gap-[clamp(2px,0.27vw,4px)] p-[clamp(10px,0.97vw,14px)_clamp(12px,1.25vw,18px)]"
                       }`}
                     >
-                      {/* FLUID IMAGE CONTAINER: w-full locks it to the new fluid padding, height scales fluidly. */}
-                      <div className={`relative shrink-0 overflow-hidden w-full rounded-[5px] ${
-                        isLarge ? "h-[clamp(206px,20.2vw,291px)]" : "h-[clamp(158px,15.48vw,223px)]"
+                      {/* 2. IMAGE FIX: Fluid width + locked aspect ratio perfectly anchors the photo to the top edge. */}
+                      <div className={`relative shrink-0 w-full overflow-hidden rounded-[5px] ${
+                        isLarge ? "aspect-[251/291]" : "aspect-[211/223]"
                       }`}>
                         <Image
                           src={currentFounder.image}
@@ -107,15 +103,14 @@ export default function Hero() {
                         />
                       </div>
 
-                      <div className="flex flex-col pt-[5px]">
-                        {/* FLUID TEXT: Exact clamp math to match your 20px and 16px font sizes */}
-                        <p className={`font-['Libre_Baskerville',_serif] font-bold leading-[119%] text-black ${
-                          isLarge ? "text-[clamp(14px,1.38vw,20px)]" : "text-[clamp(12px,1.11vw,16px)]"
+                      <div className="flex w-full flex-col pt-[clamp(3px,0.34vw,5px)]">
+                        <p className={`w-full font-['Libre_Baskerville',_serif] font-bold leading-[119%] text-black ${
+                          isLarge ? "text-[clamp(13px,1.38vw,20px)]" : "text-[clamp(11px,1.11vw,16px)]"
                         }`}>
                           {currentFounder.name}
                         </p>
-                        <p className={`mt-[4px] font-['Poppins',_sans-serif] font-light leading-[119%] text-black ${
-                          isLarge ? "text-[clamp(10px,0.83vw,12px)]" : "text-[clamp(10px,0.83vw,12px)]"
+                        <p className={`mt-[clamp(2px,0.27vw,4px)] w-full font-['Poppins',_sans-serif] font-light leading-[119%] text-black ${
+                          isLarge ? "text-[clamp(9px,0.83vw,12px)]" : "text-[clamp(9px,0.83vw,12px)]"
                         }`}>
                           {currentFounder.role}
                         </p>
