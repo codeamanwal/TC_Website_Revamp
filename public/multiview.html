@@ -16,7 +16,7 @@
     p  { margin: 0 0 24px; font-size: 12px; color: #888; }
     .controls { margin-bottom: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
     .controls label { font-size: 12px; color: #888; }
-    .controls input { background: #222; color: #eee; border: 1px solid #333; padding: 4px 8px; border-radius: 4px; width: 80px; font-family: inherit; }
+    .controls input { background: #222; color: #eee; border: 1px solid #333; padding: 4px 8px; border-radius: 4px; width: 120px; font-family: inherit; }
     button { background: #2563eb; color: white; border: 0; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 12px; }
 
     .grid {
@@ -39,15 +39,10 @@
     }
     .tile header .name { font-weight: 600; }
     .tile header .dims { color: #888; }
-    /*
-      The trick: each iframe is sized at the REAL target viewport (e.g. 1920x1080)
-      so the page inside thinks it has that much space. Then we visually shrink it
-      to fit the tile with `transform: scale()`.
-    */
+    
     .viewport {
       position: relative;
       width: 100%;
-      /* aspect-ratio is set per-tile inline so the box matches the device shape */
       overflow: hidden;
       background: #000;
     }
@@ -57,20 +52,19 @@
       left: 0;
       border: 0;
       transform-origin: top left;
-      /* width/height/scale set per-tile inline below */
     }
   </style>
 </head>
 <body>
 
   <h1>Multi-viewport preview · titancapital</h1>
-  <p>Each tile is a real iframe sized to the target viewport, scaled to fit. Edit the path / add tiles as you like.</p>
+  <p>Each tile represents a real iframe configured to matching device scaling configurations. Ordered from most vertically restricted to largest space.</p>
 
   <div class="controls">
     <label>Path:</label>
     <input id="path" value="/" />
     <button onclick="reloadAll()">Reload all</button>
-    <label style="margin-left:auto">⚠ Resize the browser window to fit more tiles per row.</label>
+    <label style="margin-left:auto">⚠ Resize browser window to rearrange layout grid rows.</label>
   </div>
 
   <div class="grid" id="grid"></div>
@@ -78,27 +72,44 @@
   <script>
     /*
       Each entry: [label, cssWidth, cssHeight].
-      For Windows scaling, the CSS viewport = physical resolution ÷ scale factor.
-      Sorted from tightest (height-stressed) to most spacious so problem cases
-      show up first.
+      Formula used: Physical Resolution / Scale Factor = CSS Viewport Space.
+      Sorted sequentially from lowest vertical height to highest space.
     */
     const SIZES = [
-      // ── Worst cases for vertical height (Windows defaults on small laptops) ──
-      ["Windows FHD @ 150%",          1280, 720],   // 1920×1080 ÷ 1.5
-      ["Dell XPS / ThinkPad @ 150%",  1280, 800],   // 1920×1200 ÷ 1.5 — very common
-      ["Tight legacy laptop @ 100%",  1366, 768],
-      // ── Mid-tier laptops ──
-      ["Windows 1440×900 @ 100%",     1440, 900],
-      ["Surface Laptop @ 150%",       1504, 1003],  // 2256×1504 ÷ 1.5
-      ["MacBook 13\" (reference)",    1512, 982],
-      ["Windows FHD @ 125% (default)", 1536, 864],  // most common Windows config
-      // ── Spacious laptops & desktops ──
-      ["Windows 1600×900 @ 100%",     1600, 900],
-      ["Windows FHD @ 100%",          1920, 1080],
-      ["Windows FHD @ 90%",           2133, 1200],  // power user, more screen estate
+      // ── CRITICAL / HIGHLY CONSTRAINED (16:9 at high scaling) ──
+      ["FHD 1080p Laptop @ 175%",     1097, 617],
+      ["WUXGA 1200p Laptop @ 175%",    1097, 685],
+      ["FHD 1080p Laptop @ 150%",     1280, 720],   // Standard budget default
+      ["Legacy / Budget Laptop 100%", 1366, 768],   // Still prominent globally
+      ["WUXGA (XPS/ThinkPad) @ 150%", 1280, 800],   // Modern 16:10 business baseline
+
+      // ── MID-TIER SCALING (Highly popular setups) ──
+      ["FHD 1080p Laptop @ 125%",     1536, 864],   // Most common Windows consumer setup
+      ["Older 13\" Pro / Air (1440x900)", 1440, 900],
+      ["3K OLED Laptop @ 200%",       1440, 900],   // High-res OLED panel native scaling defaults
+      ["QHD 1440p Screen @ 150%",     1706, 960],
+      ["WUXGA (XPS/ThinkPad) @ 125%", 1536, 960],   
+      ["MacBook Air/Pro 13\" (Default)", 1512, 982], // Apple Reference
+
+      // ── MODERN COMPACT WORKSTATIONS (Premium ultra-portables) ──
+      ["Surface Laptop @ 150%",       1504, 1003],  // 2256×1504 original res
+      ["3K OLED Laptop @ 175%",       1646, 1028],  // Ultra-crisp reading optimization
+      ["QHD+ 16:10 Laptop @ 150%",    1706, 1066],  // High-end gaming/creator baseline (e.g. Legion/Zephyrus)
+      ["MacBook Pro 14\" (Native Apparent)", 1728, 1117],
+
+      // ── SPACIOUS LAPTOPS & EXTERNAL MONITORS ──
+      ["QHD 1440p Screen @ 125%",     2048, 1152],  // Standard desktop monitor workstation scaling
+      ["MacBook Pro 16\" (Native Apparent)", 2056, 1329],
+      ["QHD+ 16:10 Laptop @ 125%",    2048, 1280],
+
+      // ── 100% UN-SCALED BASELINES (Desktop / Power-user views) ──
+      ["FHD 1080p Baseline @ 100%",   1920, 1080],  // Standard desktop
+      ["WUXGA 1200p Baseline @ 100%", 1920, 1200],  // 16:10 standard desktop
+      ["QHD 1440p Monitor @ 100%",    2560, 1440],  // Standard 27-inch monitor
+      ["QHD+ 16:10 Panel @ 100%",     2560, 1600],  // Native unscaled laptop workspace
+      ["4K UHD Monitor @ 150%",       2560, 1440]   // Popular 4K desktop scaling arrangement
     ];
 
-    // Width of the visible tile (CSS px). Iframe gets scaled to fit this.
     const TILE_WIDTH = 400;
 
     function render() {
@@ -115,7 +126,7 @@
         tile.innerHTML = `
           <header>
             <span class="name">${name}</span>
-            <span class="dims">${w} × ${h}</span>
+            <span class="dims">${w} × ${h} px</span>
           </header>
           <div class="viewport" style="height:${tileHeight}px">
             <iframe

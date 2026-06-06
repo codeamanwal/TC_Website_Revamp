@@ -47,15 +47,15 @@ export default function BackedBefore() {
           ========================================= */}
       <div className="flex flex-col items-center w-full max-w-[1009px] px-4 mb-4 md:mb-8 mx-auto">
         
+        {/* FLUID TYPOGRAPHY APPLIED HERE */}
         <motion.h2 
-          className="text-[#001A4D] text-center font-libre text-[40px] md:text-[80px] italic font-semibold leading-[120%]"
+          className="text-[var(--Primary-Color,#001A4D)] text-center font-libre text-[clamp(40px,5vw,64px)] italic font-semibold leading-[120%]"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.8 }}
         >
-          {/* FIX: Parent gets relative and a positive z-index (z-10) to trap the child layers */}
           <motion.div 
-            className="relative z-10 flex w-full max-w-[320px] md:max-w-[554px] p-[10px] justify-center items-center gap-[10px] mx-auto bg-transparent"
+            className="relative z-10 flex w-full max-w-[fit-content] p-[10px] justify-center items-center gap-[10px] mx-auto bg-transparent"
             variants={{
               hidden: { opacity: 0, x: -80 },
               visible: { 
@@ -65,7 +65,6 @@ export default function BackedBefore() {
               }
             }}
           >
-            {/* FIX: Highlight gets z-0 (positive, but behind text) so it never falls behind the white section background */}
             <motion.div
               className="absolute inset-0 bg-[#d3e2ff] z-0"
               style={{ transformOrigin: "left" }} 
@@ -77,13 +76,13 @@ export default function BackedBefore() {
                 }
               }}
             />
-            {/* FIX: Text gets z-20 to stay clearly on top of the blue box */}
             <span className="relative z-20 whitespace-nowrap">Backed before</span>
           </motion.div>
         </motion.h2>
 
+        {/* FLUID TYPOGRAPHY APPLIED HERE */}
         <motion.h2 
-          className="self-stretch text-[#001A4D] text-center font-libre text-[40px] md:text-[80px] font-semibold leading-[120%] mt-2 md:mt-0"
+          className="self-stretch text-[var(--Primary-Color,#001A4D)] text-center font-libre text-[clamp(40px,5vw,64px)] italic font-semibold leading-[120%] mt-2 md:mt-0"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.8 }}
