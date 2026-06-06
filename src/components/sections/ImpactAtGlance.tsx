@@ -38,9 +38,10 @@ const CarouselItem = ({
     return `${Math.sin(diff * angleMultiplier) * radius}px`;
   });
 
+  // Downward arch curve
   const y = useTransform(progress, (p) => {
     const diff = getDiff(p);
-    return `${- (diff * diff) * 45}px`; 
+    return `${(diff * diff) * 45}px`; 
   });
 
   const scale = useTransform(progress, (p) => {
@@ -67,17 +68,20 @@ const CarouselItem = ({
       style={{ x, y, scale, opacity, zIndex }}
       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center text-center w-[90%] max-w-[700px]"
     >
-      <h2 className="text-[64px] md:text-[128px] font-medium text-[#001A4D] font-['Libre_Baskerville',_serif] leading-none mb-4 md:mb-6 tracking-tight">
+      <h2 
+        className="text-[clamp(36px,4.5vw,54px)] font-bold text-[#001A4D] font-['Libre_Baskerville',_serif] not-italic leading-[119%] mb-2 md:mb-4 shrink-0 flex items-center justify-center"
+        style={{ transform: "rotate(-0.157deg)" }}
+      >
         {data.num}
       </h2>
       
-      <h3 className="text-[24px] md:text-[44px] font-medium text-[#001A4D] font-['Libre_Baskerville',_serif] leading-[120%] max-w-[180px] md:max-w-[340px] mx-auto">
+      <h3 className="text-[clamp(20px,2.5vw,32px)] font-semibold text-[#001A4D] font-['Libre_Baskerville',_serif] not-italic leading-[119%] max-w-[180px] md:max-w-[340px] mx-auto">
         {data.label}
       </h3>
       
       <motion.h4 
         style={{ opacity: captionOpacity }}
-        className="mt-4 md:mt-6 text-[#323232] font-['Poppins',_sans-serif] text-[16px] md:text-[20px] font-normal leading-relaxed w-[80%] max-w-xl mx-auto"
+        className="mt-4 md:mt-6 text-[#323232] font-['Poppins',_sans-serif] text-[clamp(14px,1.2vw,16px)] font-normal leading-relaxed w-[80%] max-w-xl mx-auto"
       >
         {data.caption}
       </motion.h4>
@@ -90,7 +94,7 @@ export default function ImpactAtGlance() {
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"],
+    offset: ["start end", "end start"], 
   });
 
   const blobScale = useTransform(scrollYProgress, (p) => {
@@ -107,72 +111,73 @@ export default function ImpactAtGlance() {
   return (
     <section 
       ref={containerRef} 
-      className="block relative w-full h-[300vh] p-0 m-0 overflow-visible"
+      // Adjusted padding to pt-[80px] so it breathes well in the 430px box
+      className="relative flex flex-col items-center gap-[16px] w-full h-[430px] overflow-hidden m-0 pt-[80px] pb-[40px] bg-white shrink-0"
     >
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-[40px] md:pt-[80px]">
-        
-        {/* =========================================
-              FIGMA RESTORED HEADING SEQUENCE
-              ========================================= */}
-        <div className="flex flex-col items-center justify-center w-full px-4 mb-auto pt-[40px] md:pt-[70px] z-50">
-          <motion.div 
-            className="flex flex-col md:flex-row items-center justify-center text-center gap-2 md:gap-0 w-full max-w-[1280px] mx-auto"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+      {/* =========================================
+            HEADING SEQUENCE
+            ========================================= */}
+      {/* Reduced z-index to 10 so it correctly slides underneath your Navigation Bar */}
+      <div className="relative flex flex-col items-center justify-center w-full px-4 z-10 shrink-0">
+        <motion.div 
+          className="flex flex-col md:flex-row items-center justify-center text-center gap-2 md:gap-0 w-full max-w-[1280px] mx-auto"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+        >
+          {/* "Impact" */}
+          <motion.span 
+            className="relative overflow-hidden inline-block md:mr-4 p-[6px_16px] text-[clamp(40px,5vw,64px)] text-[var(--Primary-Color,#001A4D)] font-['Libre_Baskerville',_serif] font-bold italic bg-transparent"
+            variants={{
+              hidden: { opacity: 0, y: 40 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+            }}
           >
-            {/* "Impact" -> font-bold (700), italic, text-[80px], leading-[120%] */}
-            <motion.span 
-              className="relative overflow-hidden inline-block md:mr-4 p-[6px_16px] text-[40px] md:text-[80px] text-[#001A4D] font-['Libre_Baskerville',_serif] font-bold bg-transparent"
+            <motion.span
+              className="absolute inset-0 bg-[#D3E2FF] z-0" 
+              style={{ transformOrigin: "left" }} 
               variants={{
-                hidden: { opacity: 0, y: 40 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+                hidden: { scaleX: 0 },
+                visible: { scaleX: 1, transition: { duration: 0.5, ease: "easeInOut", delay: 0.5 } }
               }}
-            >
-              <motion.span
-                className="absolute inset-0 bg-[#D3E2FF] z-0" 
-                style={{ transformOrigin: "left" }} 
-                variants={{
-                  hidden: { scaleX: 0 },
-                  visible: { scaleX: 1, transition: { duration: 0.5, ease: "easeInOut", delay: 0.5 } }
-                }}
-              />
-              <span className="relative z-10 italic leading-[120%]">Impact</span>
-            </motion.span>
-            
-            {/* "at glance" -> font-semibold (600), normal style, text-[80px], leading-[120%] */}
-            <motion.span 
-              className="px-4 text-[40px] md:text-[80px] text-[#001A4D] font-['Libre_Baskerville',_serif] font-semibold leading-[120%]"
-              variants={{
-                hidden: { opacity: 0, y: 40 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.9 } }
-              }}
-            >
-              at glance
-            </motion.span>
-          </motion.div>
-        </div>
-
-        {/* SPHERICAL INFINITE GLOBE CAROUSEL */}
-        <div className="relative w-full flex-1 flex items-center justify-center -mt-10 md:-mt-20">
-          
-          {/* BLOOMING GRADIENT BLOB */}
-          <motion.div 
-            style={{ scale: blobScale, opacity: blobOpacity }}
-            className="absolute inset-0 m-auto w-[240px] h-[240px] md:w-[400px] md:h-[400px] bg-[#D3E2FF] blur-[60px] md:blur-[100px] rounded-full pointer-events-none z-0 transition-shadow duration-150 ease-out" 
-          />
-
-          {/* INFINITE CAROUSEL ITEMS */}
-          {impactData.map((item, i) => (
-            <CarouselItem 
-              key={i} 
-              data={item} 
-              index={i} 
-              progress={scrollYProgress} 
             />
-          ))}
+            <span className="relative z-10 leading-[120%]">Impact</span>
+          </motion.span>
+          
+          {/* "at glance" */}
+          <motion.span 
+            className="px-4 text-[clamp(40px,5vw,64px)] text-[var(--Primary-Color,#001A4D)] font-['Libre_Baskerville',_serif] font-bold not-italic leading-[120%]"
+            variants={{
+              hidden: { opacity: 0, y: 40 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.9 } }
+            }}
+          >
+            at glance
+          </motion.span>
+        </motion.div>
+      </div>
 
-        </div>
+      {/* =========================================
+            SPHERICAL CAROUSEL
+            ========================================= */}
+      <div className="relative w-full flex-1 flex items-center justify-center mt-[-20px]">
+        
+        {/* BLOOMING GRADIENT BLOB */}
+        <motion.div 
+          style={{ scale: blobScale, opacity: blobOpacity }}
+          className="absolute inset-0 m-auto w-[240px] h-[240px] md:w-[350px] md:h-[350px] bg-[#D3E2FF] blur-[60px] md:blur-[80px] rounded-full pointer-events-none z-0 transition-shadow duration-150 ease-out" 
+        />
+
+        {/* INFINITE CAROUSEL ITEMS */}
+        {impactData.map((item, i) => (
+          <CarouselItem 
+            key={i} 
+            data={item} 
+            index={i} 
+            progress={scrollYProgress} 
+          />
+        ))}
+
       </div>
     </section>
   );

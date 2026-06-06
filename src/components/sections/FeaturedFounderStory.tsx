@@ -133,7 +133,7 @@ export default function FeaturedFounderStory() {
       {/* 2. TV Wrapper */}
       <div className="relative w-full max-w-[650px]">
         <Image
-          src="/images/misc/television.png"
+          src="/images/misc/television.svg"
           alt="Television frame"
           width={800}
           height={500}

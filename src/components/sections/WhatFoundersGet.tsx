@@ -182,7 +182,7 @@ export default function WhatFoundersGet() {
         
         {/* "How We" - Normal */}
         <motion.h2 
-          className="m-0 text-center font-['Libre_Baskerville',_serif] text-[clamp(36px,4.5vw,64px)] font-semibold not-italic leading-[150%] text-[var(--Primary-Color,#001A4D)] whitespace-nowrap"
+          className="m-0 text-center font-['Libre_Baskerville',_serif] text-[clamp(24px,4.5vw,48px)] font-semibold not-italic leading-[100%] text-[var(--Primary-Color,#001A4D)] whitespace-nowrap"
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.8 }}
@@ -199,7 +199,7 @@ export default function WhatFoundersGet() {
           viewport={{ once: true, amount: 0.8 }}
           transition={{ duration: 0.9, ease: "easeOut", delay: 0.2 }}
         >
-          <span className="whitespace-nowrap text-center font-['Libre_Baskerville',_serif] text-[clamp(36px,4.5vw,64px)] font-semibold italic leading-[150%] text-[var(--Primary-Color,#001A4D)]">
+          <span className="whitespace-nowrap text-center font-['Libre_Baskerville',_serif] text-[clamp(24px,4.5vw,48px)] font-semibold italic leading-[150%] text-[var(--Primary-Color,#001A4D)]">
             Show Up
           </span>
         </motion.div>
@@ -207,7 +207,7 @@ export default function WhatFoundersGet() {
       </div>
 
       {/* FLOWCHART SECTION - STAGGERED ORCHESTRATOR */}
-      <div className="z-0 flex h-[400px] w-full justify-center overflow-hidden sm:h-[450px] md:h-[550px] lg:mt-[-60px] lg:h-[650px] xl:h-[750px]">
+      <div className="z-0 flex h-[400px] w-full justify-center overflow-hidden sm:h-[450px] md:h-[550px] sm:mt-[-50px] md:mt-[-50px] lg:mt-[-50px] lg:h-[650px] xl:h-[750px]">
         {/* We attach the orchestrator here. It triggers when 30% of this box is visible on screen */}
         <motion.div 
           initial="hidden"

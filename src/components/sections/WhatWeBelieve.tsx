@@ -73,39 +73,48 @@ export default function WhatWeBelieve() {
      {/* =========================================
           STRICT 1-2-3 ANIMATED HEADING
           ========================================= */}
-      <div className="z-20 flex flex-wrap items-center justify-center gap-x-3 text-center md:gap-x-4">
+      <motion.div 
+        className="z-20 flex flex-wrap items-center justify-center gap-x-[clamp(8px,1.5vw,16px)] text-center"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.8 }}
+      >
+        
+        {/* "What" - Normal font, Clamped to 64px */}
         <motion.span 
-          className="m-0 font-['Libre_Baskerville',_serif] text-[40px] font-semibold leading-[120%] text-[#001A4D] md:text-[80px]" 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.8 }}
-          transition={{ duration: 0.6, ease: "easeOut" }} 
+          className="m-0 font-['Libre_Baskerville',_serif] text-[clamp(40px,5vw,64px)] font-semibold not-italic leading-[120%] text-[var(--Primary-Color,#001A4D)]" 
+          variants={{
+            hidden: { opacity: 0, y: 40 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+          }}
         >
           What
         </motion.span>
         
-        <motion.span 
-          className="relative inline-flex items-center justify-center overflow-hidden bg-transparent px-2 md:px-4" 
-          initial={{ opacity: 0, x: -80 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.8 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.6 }}
+        {/* "We believe" - Italic font + Highlight, Clamped to 64px */}
+        <motion.div 
+          className="relative inline-flex items-center justify-center overflow-hidden bg-transparent px-[clamp(8px,1.5vw,16px)] py-[clamp(4px,0.8vw,8px)]" 
+          variants={{
+            hidden: { opacity: 0, x: -80 },
+            visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.3 } }
+          }}
         >
-          <motion.span
-            className="absolute inset-0 z-0 bg-[#D3E2FF]"
-            initial={{ scaleX: 0 }} 
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, amount: 0.8 }}
-            transition={{ duration: 0.5, ease: "easeInOut", delay: 1.2 }}
+          {/* Highlight Background Fix (Using Variants) */}
+          <motion.div
+            className="absolute inset-0 z-0 bg-[#D3E2FF] h-full w-full"
             style={{ transformOrigin: "left" }} 
+            variants={{
+              hidden: { scaleX: 0 },
+              visible: { scaleX: 1, transition: { duration: 0.6, ease: "easeInOut", delay: 0.9 } }
+            }}
           />
           
-          <span className="relative z-10 font-['Libre_Baskerville',_serif] text-[40px] font-semibold italic leading-[120%] text-[#001A4D] md:text-[80px]">
+          <span className="relative z-10 font-['Libre_Baskerville',_serif] text-[clamp(40px,5vw,64px)] font-semibold italic leading-[120%] text-[var(--Primary-Color,#001A4D)]">
             We believe
           </span>
-        </motion.span>
-      </div>
-
+        </motion.div>
+      </motion.div>
+      
       {/* =========================================
           ANIMATED CARDS FAN-OUT SEQUENCE
           ========================================= */}
@@ -117,7 +126,7 @@ export default function WhatWeBelieve() {
       >
         {beliefs.map((belief, i) => (
           <motion.div 
-            // 323px Max Width (10px wider as requested)
+            // 323px Max Width 
             className="relative flex aspect-[16/23] w-full max-w-[323px] shrink-0 flex-col items-center justify-center" 
             key={i}
             variants={getCardVariants(i)}
@@ -132,19 +141,17 @@ export default function WhatWeBelieve() {
             />
             
             <motion.div 
-              // Replaced gap-[13px] with fluid gap-[5.3%]
               className="absolute left-[14.05%] top-[25.55%] z-10 flex w-[77.95%] flex-col items-start gap-[5.3%] text-left"
               variants={textVariants}
             >
-              {/* TEXT FIXED AT 24PX - Replaced pl-[10px] with fluid pl-[4.1%] */}
-              <h3 className="m-0 self-stretch shrink-0 pl-[4.1%] font-['Libre_Baskerville',_serif] text-[24px] font-semibold not-italic leading-[155%] text-[#001A4D]">
+              {/* SUBTITLE: Slight fluid clamp (18px -> 24px) to ensure no wrapping if card shrinks */}
+              <h3 className="m-0 self-stretch shrink-0 pl-[4.1%] font-['Libre_Baskerville',_serif] text-[clamp(18px,2.5vw,24px)] font-semibold not-italic leading-[155%] text-[var(--Primary-Color,#001A4D)]">
                 {belief.title}
               </h3>
               
-              {/* Replaced p-[10px] with fluid p-[4.1%] */}
               <div className="flex w-[89.7%] items-center justify-center p-[4.1%]">
-                {/* TEXT FIXED AT 14PX */}
-                <p className="m-0 flex-1 font-['Poppins',_sans-serif] text-[14px] font-normal leading-[140%] text-[#323232]">
+                {/* DESC: Slight fluid clamp (12px -> 14px) */}
+                <p className="m-0 flex-1 font-['Poppins',_sans-serif] text-[clamp(12px,1.2vw,14px)] font-normal leading-[140%] text-[#323232]">
                   {belief.description}
                 </p>
               </div>
