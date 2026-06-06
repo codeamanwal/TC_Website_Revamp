@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Multi-viewport preview</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, system-ui, sans-serif;
+      background: #111;
+      color: #eee;
+      padding: 24px;
+    }
+    h1 { margin: 0 0 4px; font-size: 16px; font-weight: 600; }
+    p  { margin: 0 0 24px; font-size: 12px; color: #888; }
+    .controls { margin-bottom: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .controls label { font-size: 12px; color: #888; }
+    .controls input { background: #222; color: #eee; border: 1px solid #333; padding: 4px 8px; border-radius: 4px; width: 80px; font-family: inherit; }
+    button { background: #2563eb; color: white; border: 0; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 12px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      gap: 24px;
+    }
+    .tile {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .tile header {
+      padding: 10px 14px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .tile header .name { font-weight: 600; }
+    .tile header .dims { color: #888; }
+    /*
+      The trick: each iframe is sized at the REAL target viewport (e.g. 1920x1080)
+      so the page inside thinks it has that much space. Then we visually shrink it
+      to fit the tile with `transform: scale()`.
+    */
+    .viewport {
+      position: relative;
+      width: 100%;
+      /* aspect-ratio is set per-tile inline so the box matches the device shape */
+      overflow: hidden;
+      background: #000;
+    }
+    .viewport iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 0;
+      transform-origin: top left;
+      /* width/height/scale set per-tile inline below */
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Multi-viewport preview · titancapital</h1>
+  <p>Each tile is a real iframe sized to the target viewport, scaled to fit. Edit the path / add tiles as you like.</p>
+
+  <div class="controls">
+    <label>Path:</label>
+    <input id="path" value="/" />
+    <button onclick="reloadAll()">Reload all</button>
+    <label style="margin-left:auto">⚠ Resize the browser window to fit more tiles per row.</label>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <script>
+    /*
+      Each entry: [label, cssWidth, cssHeight].
+      For Windows scaling, the CSS viewport = physical resolution ÷ scale factor.
+      E.g. 1920×1080 @ 125% → 1920/1.25 × 1080/1.25 = 1536 × 864.
+    */
+    const SIZES = [
+      ["Tight laptop",              1366, 768],
+      ["MacBook 13\"",              1512, 982],
+      ["Windows 1920×1080 @ 90%",   2133, 1200],
+      ["Windows 1920×1080 @ 100%",  1920, 1080],
+      ["Windows 1920×1080 @ 125%",  1536, 864],
+      ["Windows 1920×1080 @ 150%",  1280, 720],
+    ];
+
+    // Width of the visible tile (CSS px). Iframe gets scaled to fit this.
+    const TILE_WIDTH = 400;
+
+    function render() {
+      const path = document.getElementById("path").value || "/";
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+
+      for (const [name, w, h] of SIZES) {
+        const scale = TILE_WIDTH / w;
+        const tileHeight = h * scale;
+
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.innerHTML = `
+          <header>
+            <span class="name">${name}</span>
+            <span class="dims">${w} × ${h}</span>
+          </header>
+          <div class="viewport" style="height:${tileHeight}px">
+            <iframe
+              src="${path}"
+              style="width:${w}px; height:${h}px; transform: scale(${scale});"
+              loading="lazy"
+            ></iframe>
+          </div>
+        `;
+        grid.appendChild(tile);
+      }
+    }
+
+    function reloadAll() { render(); }
+
+    render();
+  </script>
+
+</body>
+</html>

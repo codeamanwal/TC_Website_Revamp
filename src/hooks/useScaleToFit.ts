@@ -19,6 +19,12 @@ type Options = {
    * padding. Set it to your reference screen's scale (designWidth / refWidth).
    */
   maxScale?: number;
+  /**
+   * Breathing room reserved on each side (px) before fitting. Without this,
+   * on screens where width or height is the binding constraint the content
+   * sits flush against the edges. Default 40 leaves 40px on every side.
+   */
+  padding?: number;
 };
 
 /**
@@ -36,6 +42,7 @@ export function useScaleToFit<T extends HTMLElement = HTMLDivElement>({
   reservedHeight = 0,
   minScale = 0.5,
   maxScale = 1.35,
+  padding = 40,
 }: Options) {
   const frameRef = useRef<T>(null);
   const [scale, setScale] = useState(1);
@@ -50,8 +57,10 @@ export function useScaleToFit<T extends HTMLElement = HTMLDivElement>({
     const frameHeight = frame.offsetHeight;
     if (frameHeight === 0) return;
 
-    const availableWidth = window.innerWidth;
-    const availableHeight = window.innerHeight - reservedHeight;
+    // Subtract padding from both axes so the content never sits flush against
+    // the viewport edges when width or height is the binding constraint.
+    const availableWidth = window.innerWidth - padding * 2;
+    const availableHeight = window.innerHeight - reservedHeight - padding * 2;
 
     const next = Math.min(
       availableWidth / designWidth,
@@ -61,7 +70,7 @@ export function useScaleToFit<T extends HTMLElement = HTMLDivElement>({
 
     setScale(Math.max(next, minScale));
     setReady(true);
-  }, [designWidth, reservedHeight, minScale, maxScale]);
+  }, [designWidth, reservedHeight, minScale, maxScale, padding]);
 
   useIsomorphicLayoutEffect(() => {
     compute();

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Libre_Baskerville, Poppins, Inter, Plus_Jakarta_Sans, Montserrat, DM_Sans } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import "./globals.css";
@@ -53,6 +53,18 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "Titan Capital",
   description: "Early stage venture capital fund by Kunal Bahl & Rohit Bansal",
+};
+
+/*
+  VIEWPORT META — required for responsive CSS to work correctly on mobile.
+  Without `width=device-width, initial-scale=1` mobile browsers render at
+  ~980px and zoom out, breaking every vw / clamp / breakpoint we wrote.
+  Next.js adds this by default; we declare it explicitly so it's intentional.
+*/
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Allow user zoom — disabling it (maximumScale: 1) hurts accessibility.
 };
 
 /*

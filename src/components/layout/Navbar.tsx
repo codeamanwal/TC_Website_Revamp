@@ -57,7 +57,7 @@ export default function Navbar() {
           MAIN TOP NAVBAR (Closed State)
           ========================================= */}
       {/* FLUID NAV: Height and padding scale down fluidly on smaller screens */}
-      <nav className="fixed left-0 top-0 z-[40] flex h-[clamp(60px,5.34vw,77px)] w-full items-center justify-between bg-[linear-gradient(90deg,#001A4D_0%,#001A4D_58.17%,#003C82_74.52%,#06C_89.42%,#001A4D_100%)] px-[clamp(16px,4.3vw,62px)]">
+      <nav className="fixed left-0 top-0 z-[40] flex h-[var(--nav-height)] w-full items-center justify-between bg-[linear-gradient(90deg,#001A4D_0%,#001A4D_58.17%,#003C82_74.52%,#06C_89.42%,#001A4D_100%)] px-[clamp(16px,4.3vw,62px)]">
         
         {/* FLUID TOGGLE: Button size and padding scale perfectly */}
         <button
@@ -110,14 +110,20 @@ export default function Navbar() {
           aria-label="Close menu by clicking outside"
         />
 
-        <div 
-          className={`relative z-10 flex h-full w-full max-w-[1051px] flex-col shadow-2xl transition-transform duration-500 ease-in-out ${
+        {/*
+          Container — sized to its ACTUAL content (no fixed max-w-[1051px]).
+          When the right panel is closed, the container is just the width of
+          the left panel. When opened, it grows. This is what kills the
+          transparent strip the user complained about.
+        */}
+        <div
+          className={`relative z-10 flex h-full max-w-full flex-col shadow-2xl transition-transform duration-500 ease-in-out ${
             isMenuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          
-          {/* FLUID INNER NAVBAR: Mirrors Top Nav measurements */}
-          <div className="flex h-[clamp(60px,5.34vw,77px)] w-full shrink-0 items-center justify-between bg-[#001A4D] px-[clamp(24px,4.3vw,62px)]">
+
+          {/* Inner top navbar — spans whatever the container's current width is */}
+          <div className="flex h-[var(--nav-height)] w-full shrink-0 items-center justify-between bg-[#001A4D] px-[clamp(24px,4.3vw,62px)]">
             <button
               onClick={() => setIsMenuOpen(false)}
               className="cursor-pointer transition-opacity hover:opacity-70"
@@ -140,11 +146,10 @@ export default function Navbar() {
             )}
           </div>
 
-          <div className="relative flex flex-1 w-full overflow-hidden bg-transparent">
-            
-            {/* --- FLUID LEFT PANEL (Categories) --- */}
-            {/* Width clamps between standard tablet size to exactly 578px on max desktop */}
-            <div className="flex h-full w-full flex-col overflow-y-auto bg-[#001A4D] pt-[clamp(16px,1.38vw,20px)] pb-[clamp(60px,6.8vw,98px)] md:w-[clamp(350px,40.13vw,578px)]">
+          <div className="flex flex-1 overflow-hidden bg-transparent">
+
+            {/* LEFT PANEL — always visible, fixed clamp width */}
+            <div className="flex h-full w-[clamp(350px,40.13vw,578px)] shrink-0 flex-col overflow-y-auto bg-[#001A4D] pt-[clamp(16px,1.38vw,20px)] pb-[clamp(60px,6.8vw,98px)]">
               <div className="mb-[clamp(16px,1.38vw,20px)] px-[clamp(24px,2.5vw,36px)]">
                 <Link
                   href="/"
@@ -164,11 +169,10 @@ export default function Navbar() {
                       activeSubMenu === item.id ? "bg-[#002868]" : "hover:bg-[#002868]/40"
                     }`}
                   >
-                    {/* FLUID TEXT: 36px on large monitors, smoothly scaling down */}
                     <span className="font-['Libre_Baskerville',_serif] text-[clamp(24px,2.5vw,36px)] font-medium leading-[150%] text-white">
                       {item.title}
                     </span>
-                    
+
                     <svg width="12" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M9 18l6-6-6-6" />
                     </svg>
@@ -177,41 +181,38 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* --- FLUID RIGHT PANEL (Subcategories) --- */}
-            {/* Width clamps exactly proportional to your 473px max dimension */}
+            {/*
+              RIGHT PANEL — width animates 0 ↔ design width.
+              - shrink-0 so the inner fixed-width content doesn't collapse
+              - overflow-hidden so content clips during the slide-in/out
+              - transition-[width] not transform: the container itself grows,
+                so there's never an empty layout slot beside the left panel
+            */}
             <div
-              className={`absolute left-0 top-0 flex h-full w-full flex-col overflow-y-auto bg-[#FBF7F0] transition-transform duration-500 ease-in-out md:relative md:w-[clamp(250px,32.84vw,473px)] ${
-                activeSubMenu 
-                  ? "translate-x-0 md:translate-x-0" 
-                  : "translate-x-full md:translate-x-full"
+              className={`h-full shrink-0 overflow-hidden bg-[#FBF7F0] transition-[width] duration-500 ease-in-out ${
+                activeSubMenu ? "w-[clamp(250px,32.84vw,473px)]" : "w-0"
               }`}
+              aria-hidden={!activeSubMenu}
             >
-              <button
-                className="mb-[clamp(20px,2vw,32px)] mt-[clamp(16px,1.66vw,24px)] flex cursor-pointer items-center gap-2 px-[clamp(24px,2.77vw,32px)] font-['Poppins',_sans-serif] font-medium text-[#001A4D] md:hidden"
-                onClick={() => setActiveSubMenu(null)}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to Categories
-              </button>
-
-              <div className="flex flex-col items-start gap-[clamp(12px,1.38vw,20px)] px-[clamp(24px,2.77vw,40px)] pt-[clamp(16px,4.16vw,60px)]">
-                {menuData
-                  .find((m) => m.id === activeSubMenu)
-                  ?.subItems.map((subItem, idx) => (
-                    <Link
-                      key={idx}
-                      href={`/${subItem.toLowerCase().replace(/\s+/g, "-")}`}
-                      onClick={() => setIsMenuOpen(false)}
-                      className="font-['Poppins',_sans-serif] text-[clamp(18px,1.66vw,24px)] font-normal leading-[150%] text-[#0E0E0E] transition-colors hover:text-[#001A4D]"
-                    >
-                      {subItem}
-                    </Link>
-                  ))}
+              {/* Inner content holds its full design width even when the outer is 0 */}
+              <div className="flex h-full w-[clamp(250px,32.84vw,473px)] flex-col overflow-y-auto">
+                <div className="flex flex-col items-start gap-[clamp(12px,1.38vw,20px)] px-[clamp(24px,2.77vw,40px)] pt-[clamp(16px,4.16vw,60px)]">
+                  {menuData
+                    .find((m) => m.id === activeSubMenu)
+                    ?.subItems.map((subItem, idx) => (
+                      <Link
+                        key={idx}
+                        href={`/${subItem.toLowerCase().replace(/\s+/g, "-")}`}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="font-['Poppins',_sans-serif] text-[clamp(18px,1.66vw,24px)] font-normal leading-[150%] text-[#0E0E0E] transition-colors hover:text-[#001A4D]"
+                      >
+                        {subItem}
+                      </Link>
+                    ))}
+                </div>
               </div>
             </div>
-            
+
           </div>
         </div>
       </div>

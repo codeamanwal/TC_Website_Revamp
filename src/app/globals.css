@@ -36,6 +36,14 @@
   --primary-dark: #001a4d;
   --home-btn-bg: #d3e2ff;
   --black: #000;
+
+  /*
+    Shared fluid nav height — single source of truth.
+    Hero and any other section that needs to know the nav height reads this
+    variable, so they stay perfectly in sync when the nav shrinks on smaller
+    screens. 77px is the design (Figma) value; 5.34vw = 77/1440.
+  */
+  --nav-height: clamp(60px, 5.34vw, 77px);
 }
 
 body {
