@@ -9,7 +9,7 @@ const menuData = [
   {
     id: "about",
     title: "ABOUT",
-    subItems: ["Our Story", "Team", "Careers", "Contact"],
+    subItems: ["Our Story", "Team", "Indicorns"],
   },
   {
     id: "for-founders",
@@ -24,12 +24,12 @@ const menuData = [
   {
     id: "community",
     title: "COMMUNITY",
-    subItems: ["Events", "Founder Network", "Resources"],
+    subItems: ["Founder Stories", "Titan Ecosystem"],
   },
   {
     id: "perspective",
     title: "PERSPECTIVE",
-    subItems: ["Blog", "News", "Podcasts", "Reports"],
+    subItems: ["Blogs", "News", "Events"],
   },
 ];
 
