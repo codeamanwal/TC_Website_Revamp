@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
 import Image from "next/image";
 
 // ROW 1: 10 Companies
@@ -47,9 +46,9 @@ export default function BackedBefore() {
           ========================================= */}
       <div className="flex flex-col items-center w-full max-w-[1009px] px-4 mb-4 md:mb-8 mx-auto">
         
-        {/* FLUID TYPOGRAPHY APPLIED HERE */}
         <motion.h2 
-          className="text-[var(--Primary-Color,#001A4D)] text-center font-libre text-[length:var(--heading-xl)] italic font-semibold leading-[120%]"
+          // FIXED: Enforced clamp(28px) and leading-[100%] on mobile
+          className="text-[var(--Primary-Color,#001A4D)] text-center font-['Libre_Baskerville',_serif] text-[clamp(28px,5vw,var(--heading-xl))] italic font-semibold leading-[100%] md:leading-[120%]"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.8 }}
@@ -80,9 +79,9 @@ export default function BackedBefore() {
           </motion.div>
         </motion.h2>
 
-        {/* FLUID TYPOGRAPHY APPLIED HERE */}
         <motion.h2 
-          className="self-stretch text-[var(--Primary-Color,#001A4D)] text-center font-libre text-[length:var(--heading-xl)] italic font-semibold leading-[120%] mt-2 md:mt-0"
+          // FIXED: Enforced clamp(28px), leading-[100%] on mobile, and changed to not-italic to match screenshot
+          className="self-stretch text-[var(--Primary-Color,#001A4D)] text-center font-['Libre_Baskerville',_serif] text-[clamp(28px,5vw,var(--heading-xl))] not-italic font-semibold leading-[100%] md:leading-[120%] mt-2 md:mt-0"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.8 }}

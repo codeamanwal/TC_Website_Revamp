@@ -50,16 +50,12 @@ const testimonials = [
   },
 ];
 
-/* ISOLATED CARD COMPONENT:
-  Handles its own hover state via React, completely eliminating the Framer Motion 
-  mid-flip glitch when the cursor accidentally slips off the edge.
-*/
 function TestimonialCard({ item }: { item: typeof testimonials[0] }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
     <div
-      className="relative shrink-0"
+      className="relative shrink-0 max-md:!w-[calc(50vw-24px)] max-md:!h-[240px] max-md:!snap-start"
       style={{
         width:  "clamp(200px, min(21.62vw, 31.72vh), 311.424px)",
         height: "clamp(238px, min(25.74vw, 37.75vh), 370.703px)",
@@ -67,7 +63,6 @@ function TestimonialCard({ item }: { item: typeof testimonials[0] }) {
       }}
       onMouseEnter={() => setIsFlipped(true)}
       onMouseLeave={() => setIsFlipped(false)}
-      // Added a click toggle for mobile users who don't have a cursor to "hover"
       onClick={() => setIsFlipped(!isFlipped)} 
     >
       <motion.div
@@ -99,17 +94,19 @@ function TestimonialCard({ item }: { item: typeof testimonials[0] }) {
             }}
           />
           <div
-            className="relative z-10 flex flex-col drop-shadow-md"
+            className="relative z-10 flex flex-col drop-shadow-md max-md:!p-[10px]"
             style={{ padding: "clamp(12px, min(1.66vw, 2.44vh), 24px)" }}
           >
+            {/* FIXED: Reduced Mobile Name Font to 13px */}
             <p
-              className="m-0 font-['Libre_Baskerville',_serif] font-bold text-white"
+              className="m-0 font-['Libre_Baskerville',_serif] font-bold text-white max-md:!text-[13px] max-md:!leading-[1.2]"
               style={{ fontSize: "clamp(14px, min(1.38vw, 2.04vh), 20px)" }}
             >
               {item.name}
             </p>
+            {/* FIXED: Reduced Mobile Role Font to 9px */}
             <p
-              className="m-0 mt-1 font-['Poppins',_sans-serif] font-light text-white"
+              className="m-0 mt-1 font-['Poppins',_sans-serif] font-light text-white max-md:!text-[7px]"
               style={{ fontSize: "clamp(10px, min(0.9vw, 1.32vh), 13px)" }}
             >
               {item.role}
@@ -119,7 +116,7 @@ function TestimonialCard({ item }: { item: typeof testimonials[0] }) {
 
         {/* ── BACK: Quote text ── */}
         <div
-          className="absolute inset-0 flex h-full w-full flex-col justify-between overflow-hidden bg-[#C8DBFF] shadow-lg"
+          className="absolute inset-0 flex h-full w-full flex-col justify-between overflow-hidden bg-[#C8DBFF] shadow-lg max-md:!p-[10px] max-md:overflow-y-auto max-md:[&::-webkit-scrollbar]:hidden"
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
@@ -127,21 +124,24 @@ function TestimonialCard({ item }: { item: typeof testimonials[0] }) {
             padding: "clamp(12px, min(1.66vw, 2.44vh), 24px)",
           }}
         >
+          {/* FIXED: Reduced Mobile Quote Font to 10px and tightened line height */}
           <p
-            className="m-0 font-['Inter',_sans-serif] font-medium leading-[1.6] text-[#001A4D]"
-            style={{ fontSize: "clamp(9px, min(0.83vw, 1.22vh), 12px)" }}
+            className="m-0 font-['Inter',_sans-serif] font-medium leading-[1.6] text-[#001A4D] max-md:!text-[8px] max-md:!leading-[1.4]"
+            style={{ fontSize: "clamp(7px, min(0.83vw, 1.22vh), 12px)" }}
           >
             {item.text}
           </p>
-          <div className="flex flex-col pt-4">
+          <div className="flex flex-col pt-3">
+            {/* FIXED: Reduced Mobile Name Font to 11px */}
             <p
-              className="m-0 font-['Libre_Baskerville',_serif] font-bold text-[#001A4D]"
+              className="m-0 font-['Libre_Baskerville',_serif] font-bold text-[#001A4D] max-md:!text-[11px]"
               style={{ fontSize: "clamp(12px, min(1.25vw, 1.83vh), 18px)" }}
             >
               {item.name}
             </p>
+            {/* FIXED: Reduced Mobile Role Font to 9px */}
             <p
-              className="m-0 mt-1 font-['Poppins',_sans-serif] font-medium text-[#001A4D]"
+              className="m-0 mt-1 font-['Poppins',_sans-serif] font-medium text-[#001A4D] max-md:!text-[9px]"
               style={{ fontSize: "clamp(9px, min(0.83vw, 1.22vh), 12px)" }}
             >
               {item.role}
@@ -227,7 +227,7 @@ export default function FounderTestimonial() {
 
       {/* ── Header row: title + arrows ── */}
       <div
-        className="mx-auto flex w-full max-w-[1440px] flex-col items-start justify-between gap-6 md:flex-row md:items-end"
+        className="mx-auto flex w-full max-w-[1440px] flex-col items-start justify-between gap-6 md:flex-row md:items-end max-md:!gap-4"
         style={{
           paddingLeft:   "var(--section-px-wide)",
           paddingRight:  "var(--section-px-wide)",
@@ -235,7 +235,7 @@ export default function FounderTestimonial() {
         }}
       >
         <motion.div
-          className="flex flex-col items-start"
+          className="flex flex-col items-start max-md:!w-full max-md:!gap-2"
           style={{
             width: "clamp(250px, min(29.79vw, 43.69vh), 429px)",
             gap:   "clamp(2px, min(0.27vw, 0.41vh), 4px)",
@@ -245,7 +245,8 @@ export default function FounderTestimonial() {
           viewport={{ once: true, amount: 0.3 }}
         >
           <motion.h2
-            className="m-0 font-['Libre_Baskerville',_serif] text-[#001A4D]"
+            // FIXED: Locked consistently to 28px on mobile to match other sections
+            className="m-0 font-['Libre_Baskerville',_serif] text-[#001A4D] max-md:!text-[28px]"
             style={{
               fontSize:   "var(--heading-xl)",
               fontWeight: 600,
@@ -258,7 +259,8 @@ export default function FounderTestimonial() {
           </motion.h2>
 
           <motion.h2
-            className="m-0 font-['Libre_Baskerville',_serif] text-[#001A4D]"
+            // FIXED: Locked consistently to 28px on mobile
+            className="m-0 font-['Libre_Baskerville',_serif] text-[#001A4D] max-md:!text-[28px]"
             style={{
               fontSize:   "var(--heading-xl)",
               fontWeight: 700,
@@ -267,18 +269,18 @@ export default function FounderTestimonial() {
             }}
             variants={t2}
           >
-            <span className="relative inline-block overflow-hidden px-2" style={{ background: "transparent" }}>
+            <span className="relative inline-block overflow-hidden px-2 max-md:!px-[4px]" style={{ background: "transparent" }}>
               <motion.span
                 className="absolute inset-0 z-0 bg-[#D3E2FF]"
                 style={{ transformOrigin: "left" }}
                 variants={hl}
               />
-              <span className="relative z-10">founders say</span>
+              <span className="relative z-10">Founder Say</span>
             </span>
           </motion.h2>
         </motion.div>
 
-        <div className="flex items-center" style={{ gap: "clamp(12px, min(1.11vw, 1.63vh), 16px)", marginBottom: "clamp(8px, min(0.97vw, 1.43vh), 14px)" }}>
+        <div className="flex items-center max-md:!hidden" style={{ gap: "clamp(12px, min(1.11vw, 1.63vh), 16px)", marginBottom: "clamp(8px, min(0.97vw, 1.43vh), 14px)" }}>
           <button
             onClick={prevSlide}
             disabled={isAtStart}
@@ -346,16 +348,14 @@ export default function FounderTestimonial() {
       {/* ── Carousel track ── */}
       <div
         ref={containerRef}
-        className="mx-auto w-full max-w-[1440px] overflow-visible"
+        className="mx-auto w-full max-w-[1440px] overflow-visible px-[var(--section-px-wide)] max-md:!px-0"
         style={{
-          paddingLeft:   "var(--section-px-wide)",
-          paddingRight:  "var(--section-px-wide)",
           paddingBottom: "clamp(24px, min(2.77vw, 4.07vh), 40px)",
         }}
       >
         <motion.div
           ref={trackRef}
-          className="flex w-max"
+          className="flex w-max max-md:!grid max-md:!grid-rows-2 max-md:!grid-flow-col max-md:!w-full max-md:!overflow-x-auto max-md:!snap-x max-md:!snap-mandatory max-md:!transform-none max-md:!px-[var(--section-px-wide)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           style={{ gap: "clamp(16px, min(1.66vw, 2.44vh), 24px)" }}
           animate={{ x: -translateX }}
           transition={{ type: "spring", stiffness: 180, damping: 28 }}
@@ -363,7 +363,7 @@ export default function FounderTestimonial() {
           {testimonials.map((item) => (
             <TestimonialCard key={item.id} item={item} />
           ))}
-          <div className="shrink-0" style={{ width: "clamp(20px, min(2.77vw, 4.07vh), 40px)" }} aria-hidden />
+          <div className="shrink-0 max-md:!hidden" style={{ width: "clamp(20px, min(2.77vw, 4.07vh), 40px)" }} aria-hidden />
         </motion.div>
       </div>
 
@@ -396,7 +396,8 @@ export default function FounderTestimonial() {
           viewport={{ once: true, amount: 0.3 }}
         >
           <motion.h2
-            className="m-0 text-center font-['Libre_Baskerville',_serif] font-bold italic leading-[1.19] text-[#001A4D]"
+            // FIXED: Locked consistently to 28px on mobile
+            className="m-0 text-center font-['Libre_Baskerville',_serif] font-bold italic leading-[1.19] text-[#001A4D] max-md:!text-[28px]"
             style={{ fontSize: "var(--heading-xl)" }}
             variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } }}
           >
@@ -411,7 +412,8 @@ export default function FounderTestimonial() {
           </motion.h2>
 
           <motion.h2
-            className="m-0 mt-2 w-full text-center font-['Libre_Baskerville',_serif] font-bold leading-[1.19] text-[#001A4D]"
+            // FIXED: Locked consistently to 28px on mobile, tightened top margin
+            className="m-0 mt-2 w-full text-center font-['Libre_Baskerville',_serif] font-bold leading-[1.19] text-[#001A4D] max-md:!text-[28px] max-md:!mt-1"
             style={{
               fontSize: "var(--heading-xl)",
               maxWidth: "clamp(350px, min(48.54vw, 71.18vh), 699px)",

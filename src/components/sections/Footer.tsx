@@ -29,13 +29,13 @@ export default function Footer() {
       <div
         className="relative z-10 flex w-full max-w-[1440px] flex-col"
         style={{
-          paddingLeft:  "var(--section-px-wide)",
-          paddingRight: "var(--section-px-wide)",
+          paddingLeft:  "var(--section-px-wide, 5%)",
+          paddingRight: "var(--section-px-wide, 5%)",
         }}
       >
 
         {/* ── TOP SECTION: Logo & Navigation Grid ── */}
-        <div className="flex w-full justify-between">
+        <div className="flex w-full flex-col justify-between gap-12 lg:flex-row lg:gap-0">
 
           {/* Left: Logo, Address, Socials */}
           <div
@@ -91,7 +91,7 @@ export default function Footer() {
 
           {/* Right: Navigation Links */}
           <div
-            className="flex"
+            className="grid grid-cols-2 sm:grid-cols-3 lg:flex"
             style={{ gap: "clamp(20px, min(4.17vw, 6.11vh), 60px)" }}
           >
             {navLinks.map((section, idx) => (
@@ -134,7 +134,7 @@ export default function Footer() {
 
         {/* ── MIDDLE SECTION: SEBI Text & Email ── */}
         <div
-          className="flex w-full items-end justify-between"
+          className="flex w-full flex-col items-start justify-between gap-6 lg:flex-row lg:items-end lg:gap-0"
           style={{ paddingBottom: "clamp(12px, min(1.67vw, 2.44vh), 24px)" }}
         >
           <p
@@ -148,7 +148,7 @@ export default function Footer() {
           </p>
           <a
             href="mailto:startups@titancapital.vc"
-            className="inline-block font-poppins font-semibold text-[#111] transition-transform duration-300 hover:scale-105 hover:opacity-70"
+            className="inline-block break-words font-poppins font-semibold text-[#111] transition-transform duration-300 hover:scale-105 hover:opacity-70"
             style={{ fontSize: "clamp(18px, min(3.19vw, 4.68vh), 46px)" }}
           >
             startups@titancapital.vc
@@ -166,7 +166,7 @@ export default function Footer() {
 
         {/* ── BOTTOM SECTION: Copyright & Links ── */}
         <div
-          className="flex w-full items-center justify-between"
+          className="flex w-full flex-col-reverse items-center justify-between gap-6 text-center lg:flex-row lg:gap-0 lg:text-left"
           style={{ marginBottom: "clamp(60px, min(10.42vw, 15.27vh), 150px)" }}
         >
           <p
@@ -176,7 +176,7 @@ export default function Footer() {
             © 2026 Titan Capital. All rights reserved.
           </p>
           <div
-            className="flex"
+            className="flex flex-wrap justify-center"
             style={{ gap: "clamp(16px, min(2.78vw, 4.07vh), 40px)" }}
           >
             <Link
@@ -200,10 +200,10 @@ export default function Footer() {
       {/* ── GIANT WATERMARK ── */}
       <div
         className="pointer-events-none absolute flex w-full justify-center overflow-hidden"
-        style={{ bottom: "clamp(-40px, min(-3.82vw, -5.6vh), -55px)" }}
+        style={{ bottom: "clamp(-25px, min(-3.82vw, -5.6vh), -55px)" }}
       >
         <h1
-          className="w-full select-none text-center font-poppins font-bold leading-[1.502] bg-[linear-gradient(0deg,#DBDBDB_26.78%,#EBEBEB_70.55%)] bg-clip-text text-transparent"
+          className="w-full select-none whitespace-nowrap text-center font-poppins font-bold leading-[1.502] bg-[linear-gradient(0deg,#DBDBDB_26.78%,#EBEBEB_70.55%)] bg-clip-text text-transparent"
           style={{
             fontSize:      "clamp(60px, min(10.42vw, 15.27vh), 150px)",
             letterSpacing: "clamp(8px, min(1.56vw, 2.29vh), 22.5px)",

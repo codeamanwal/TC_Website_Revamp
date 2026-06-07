@@ -225,18 +225,28 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* ── MOBILE CARDS — 3×2 grid (shown below lg), same flip animation ── */}
+        {/* ── MOBILE CARDS — Pure Flex Wrap for 3 up, 2 down ── */}
         <div
-          className="grid w-full grid-cols-3 lg:hidden"
+          className="flex w-full flex-wrap justify-center lg:hidden"
           style={{
-            gap:       "clamp(8px, 2.8vw, 16px)",
+            "--m-gap": "clamp(8px, 2.8vw, 16px)",
+            gap: "var(--m-gap)",
             marginTop: "clamp(4px, 2vw, 16px)",
-          }}
+          } as React.CSSProperties}
         >
           {founderSlots.map((slot, i) => {
             const f = slot.pool[currentIndices[i]];
             return (
-              <div key={i} style={{ perspective: "1000px" }}>
+              <div 
+                key={i} 
+                className="shrink-0"
+                style={{ 
+                  // Math perfectly assigns exactly 1/3 width to each card minus the gap space, 
+                  // forcing exactly 3 per row and snapping the leftovers to the center.
+                  width: "calc((100% - 2 * var(--m-gap)) / 3)", 
+                  perspective: "1000px" 
+                }}
+              >
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentIndices[i]}
@@ -257,10 +267,10 @@ export default function Hero() {
                       />
                     </div>
                     <div className="w-full pt-[clamp(4px,1.5vw,8px)]">
-                      <p className="w-full font-['Libre_Baskerville',_serif] font-bold leading-[119%] text-black text-[clamp(10px,3vw,14px)]">
+                      <p className="w-full font-['Libre_Baskerville',_serif] font-bold leading-[119%] text-black text-[clamp(7px,3vw,14px)]">
                         {f.name}
                       </p>
-                      <p className="mt-[2px] w-full font-['Poppins',_sans-serif] font-light leading-[120%] text-black text-[clamp(8px,2.3vw,11px)]">
+                      <p className="mt-[2px] w-full font-['Poppins',_sans-serif] font-light leading-[120%] text-black text-[clamp(5px,2.3vw,11px)]">
                         {f.role}
                       </p>
                     </div>
