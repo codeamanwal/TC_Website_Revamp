@@ -176,7 +176,7 @@ export default function WhatFoundersGet() {
           className="m-0 text-center font-['Libre_Baskerville',_serif] text-[length:var(--heading-xl)] font-semibold not-italic leading-[100%] text-[var(--Primary-Color,#001A4D)] whitespace-nowrap"
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.8 }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.9, ease: "easeOut" }}
         >
           How We
@@ -186,7 +186,7 @@ export default function WhatFoundersGet() {
           className="relative flex items-center justify-center bg-[#D3E2FF] px-[clamp(8px,1vw,16px)] py-[clamp(2px,0.5vw,8px)]"
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.8 }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.9, ease: "easeOut", delay: 0.2 }}
         >
           <span className="whitespace-nowrap text-center font-['Libre_Baskerville',_serif] text-[length:var(--heading-xl)] font-semibold italic leading-[150%] text-[var(--Primary-Color,#001A4D)]">
