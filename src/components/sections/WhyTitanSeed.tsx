@@ -6,7 +6,7 @@ import { motion, useInView, Variants } from "framer-motion";
 const cardsData = [
   {
     title: "Day One Access",
-    desc: "500+ founder community with shared playbooks, templates, learnings",
+    desc: "Full Titan network access from Day 1 (500+ founders, strategic partners, TEN)",
   },
   {
     title: "Founders Helping Founders",
@@ -42,14 +42,13 @@ export default function WhyTitanSeed() {
     mass: 1,
   };
 
-  // Clustered: cards overlap in center. Spread: fan out to 4 quadrants.
   const cardVariants: Variants = {
     clustered: (i: number) => {
       const positions = [
-        { x: "-35%", y: "-35%", rotate: -12, zIndex: 1 },
-        { x: "55%",  y: "-35%", rotate: 12,  zIndex: 2 },
-        { x: "-30%", y: "40%",  rotate: 6,   zIndex: 3 },
-        { x: "60%",  y: "35%",  rotate: -7,  zIndex: 4 },
+        { x: "-25%", y: "-25%", rotate: -12, zIndex: 1 },
+        { x: "25%",  y: "-25%", rotate: 12,  zIndex: 2 },
+        { x: "-20%", y: "30%",  rotate: 6,   zIndex: 3 },
+        { x: "30%",  y: "25%",  rotate: -7,  zIndex: 4 },
       ];
       return {
         x: positions[i].x,
@@ -61,10 +60,10 @@ export default function WhyTitanSeed() {
     },
     spread: (i: number) => {
       const positions = [
-        { x: "-62%", y: "-72%" },
-        { x: "62%",  y: "-48%" },
-        { x: "-85%", y: "48%" },
-        { x: "40%",  y: "60%" },
+        { x: "-65%", y: "-70%" }, 
+        { x: "65%",  y: "-65%" }, 
+        { x: "-75%", y: "45%" },  
+        { x: "55%",  y: "50%" },  
       ];
       return {
         x: positions[i].x,
@@ -78,7 +77,7 @@ export default function WhyTitanSeed() {
 
   return (
     <section
-      className="relative flex w-full flex-col items-center justify-center overflow-hidden"
+      className="relative flex w-full flex-col items-center justify-start overflow-hidden bg-white"
       style={{
         minHeight: "calc(100svh - var(--nav-height))",
         paddingTop: "clamp(40px, min(6.94vw, 10.18vh), 100px)",
@@ -87,17 +86,16 @@ export default function WhyTitanSeed() {
         paddingRight: "var(--section-px-wide)",
       }}
     >
-
       {/* ── HEADING ── */}
-      <div className="mx-auto flex w-full max-w-[1440px] flex-col">
+      <div className="mx-auto mb-[clamp(60px,10vh,120px)] flex w-full max-w-[1440px] shrink-0 flex-col">
         <motion.div
-          className="mb-[clamp(5px,1vw,15px)] flex w-full flex-row items-center max-lg:justify-center lg:justify-start"
+          className="flex w-full flex-row items-center max-lg:justify-center lg:justify-start"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.5 }}
         >
           <motion.h2
-            className="m-0 mr-2 whitespace-nowrap font-['Libre_Baskerville',_serif] text-[length:var(--heading-xl)] font-semibold not-italic leading-none text-[#001A4D] max-md:!text-[28px] md:mr-3"
+            className="m-0 mr-2 whitespace-nowrap font-['Libre_Baskerville',_serif] text-[clamp(28px,4vw,var(--heading-xl))] font-semibold not-italic leading-none text-[#001A4D] md:mr-3"
             variants={{
               hidden: { opacity: 0, x: -40 },
               visible: { opacity: 1, x: 0, transition: { duration: 0.9, ease: "easeOut" } }
@@ -107,7 +105,7 @@ export default function WhyTitanSeed() {
           </motion.h2>
 
           <motion.div
-            className="relative inline-flex items-center justify-center overflow-hidden bg-transparent px-[4px] py-[8px] max-md:!text-[28px] md:px-[6px] md:py-[10px]"
+            className="relative inline-flex items-center justify-center overflow-hidden bg-transparent px-[4px] py-[8px] md:px-[6px] md:py-[10px]"
             variants={{
               hidden: { opacity: 0, x: -40 },
               visible: { opacity: 1, x: 0, transition: { duration: 0.9, ease: "easeOut", delay: 0.2 } }
@@ -121,7 +119,7 @@ export default function WhyTitanSeed() {
                 visible: { scaleX: 1, transition: { duration: 0.6, ease: "easeInOut", delay: 0.7 } }
               }}
             />
-            <span className="relative z-10 whitespace-nowrap font-['Libre_Baskerville',_serif] text-[length:var(--heading-xl)] font-semibold italic leading-none text-[#001A4D] max-md:!text-[28px]">
+            <span className="relative z-10 whitespace-nowrap font-['Libre_Baskerville',_serif] text-[clamp(28px,4vw,var(--heading-xl))] font-semibold italic leading-none text-[#001A4D]">
               Titan Seed
             </span>
           </motion.div>
@@ -131,8 +129,7 @@ export default function WhyTitanSeed() {
       {/* ── DESKTOP: CARDS ── */}
       <div
         ref={cardsRef}
-        className="relative hidden w-full max-w-[1280px] flex-1 items-center justify-center lg:flex"
-        style={{ minHeight: "clamp(400px, calc(100svh - var(--nav-height) - 280px), 650px)" }}
+        className="relative hidden w-full max-w-[1100px] flex-1 items-center justify-center lg:flex"
       >
         {cardsData.map((card, i) => (
           <motion.div
@@ -141,26 +138,28 @@ export default function WhyTitanSeed() {
             variants={cardVariants}
             initial="clustered"
             animate={isSpread ? "spread" : "clustered"}
-            whileHover={{ scale: 1.08, zIndex: 10, transition: { type: "spring", stiffness: 300, damping: 20 } }}
+            whileHover={{ scale: 1.05, zIndex: 10, transition: { type: "spring", stiffness: 300, damping: 20 } }}
             className="absolute flex cursor-pointer flex-col items-center justify-center bg-white"
             style={{
-              width: "clamp(180px, min(22vw, 32vh), 300px)",
-              height: "clamp(170px, min(20vw, 30vh), 260px)",
-              padding: "clamp(8px, min(1.1vw, 1.6vh), 14px)",
-              borderRadius: "clamp(16px, min(2.8vw, 4vh), 40px)",
+              // FIXED: Decreased width slightly, increased height slightly.
+              width: "clamp(190px, 20vw, 290px)",
+              height: "clamp(160px, 18vw, 230px)",
+              padding: "clamp(6px, 1vw, 12px)",
+              borderRadius: "clamp(14px, 2vw, 28px)",
               boxShadow: "10px 12px 20px 0px rgba(233,233,233,0.8)",
               left: "50%",
               top: "50%",
-              marginLeft: "calc(clamp(180px, min(22vw, 32vh), 300px) / -2)",
-              marginTop: "calc(clamp(170px, min(20vw, 30vh), 260px) / -2)",
+              // Matched margins perfectly to the new clamp bounds
+              marginLeft: "calc(clamp(190px, 20vw, 290px) / -2)",
+              marginTop: "calc(clamp(160px, 18vw, 230px) / -2)",
             }}
           >
             <div
               className="relative flex h-full w-full flex-col items-center overflow-hidden bg-[#D3E2FF]"
-              style={{ borderRadius: "clamp(12px, min(2.2vw, 3.2vh), 28px)" }}
+              style={{ borderRadius: "clamp(10px, 1.5vw, 20px)" }}
             >
-              <div className="absolute top-[clamp(6px,1vw,12px)] flex w-full justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" style={{ width: "clamp(14px, min(1.5vw, 2.2vh), 22px)", height: "clamp(14px, min(1.5vw, 2.2vh), 22px)" }} viewBox="0 0 36 35" fill="none">
+              <div className="absolute top-[clamp(6px,1vw,10px)] flex w-full justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" style={{ width: "clamp(14px, 1.5vw, 18px)", height: "clamp(14px, 1.5vw, 18px)" }} viewBox="0 0 36 35" fill="none">
                   <g filter="url(#filter0_d_2413_230)">
                     <circle cx="13.0808" cy="13.0812" r="13.0782" transform="rotate(-22.4299 13.0808 13.0812)" fill="white"/>
                   </g>
@@ -179,20 +178,20 @@ export default function WhyTitanSeed() {
                 </svg>
               </div>
               <div
-                className="flex w-full items-center justify-center bg-[#001A4D] px-3 py-2"
-                style={{ marginTop: "clamp(26px, min(3.5vw, 5vh), 42px)", minHeight: "clamp(28px, min(3.5vw, 5vh), 42px)" }}
+                className="flex w-full items-center justify-center bg-[#001A4D] px-2 py-2"
+                style={{ marginTop: "clamp(20px, 3vw, 32px)", minHeight: "clamp(30px, 4vw, 40px)" }}
               >
                 <h3
                   className="text-center font-['Libre_Baskerville',_serif] font-semibold leading-[105%] text-white"
-                  style={{ fontSize: "clamp(11px, min(1.2vw, 1.8vh), 16px)" }}
+                  style={{ fontSize: "clamp(11px, 1vw, 14px)" }}
                 >
                   {card.title}
                 </h3>
               </div>
-              <div className="flex flex-1 items-center justify-center" style={{ padding: "clamp(8px, min(1.4vw, 2vh), 20px)" }}>
+              <div className="flex flex-1 items-center justify-center px-3 py-2" style={{ padding: "clamp(12px, 2.5vw, 24px)" }}>
                 <p
-                  className="text-center font-['Poppins',_sans-serif] font-normal leading-[125%] text-black"
-                  style={{ fontSize: "clamp(10px, min(1vw, 1.5vh), 14px)" }}
+                  className="text-center font-['Poppins',_sans-serif] font-normal leading-[135%] text-black"
+                  style={{ fontSize: "clamp(10px, 0.9vw, 12px)" }}
                 >
                   {card.desc}
                 </p>
@@ -202,9 +201,9 @@ export default function WhyTitanSeed() {
         ))}
       </div>
 
-      {/* ── MOBILE: VERTICAL CARD STACK ── */}
+      {/* ── TABLET / MOBILE: RESPONSIVE GRID ── */}
       <motion.div
-        className="flex w-full flex-col items-center gap-[24px] px-6 pt-6 lg:hidden"
+        className="mt-[20px] grid w-full max-w-[800px] grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[32px] lg:hidden"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.15 }}
@@ -225,13 +224,13 @@ export default function WhyTitanSeed() {
                 transition: { duration: 0.5, ease: "easeOut" },
               },
             }}
-            className="flex w-full max-w-[280px] flex-col items-center justify-center rounded-[20px] bg-white p-[10px]"
-            style={{ boxShadow: "10px 12px 20px 0px rgba(233,233,233,0.8)", height: "220px" }}
+            className="mx-auto flex w-full max-w-[320px] flex-col items-center justify-center rounded-[24px] bg-white p-[10px]"
+            style={{ boxShadow: "10px 12px 20px 0px rgba(233,233,233,0.8)", height: "230px" }}
           >
-            <div className="relative flex h-full w-full flex-col items-center overflow-hidden rounded-[14px] bg-[#D3E2FF]">
+            <div className="relative flex h-full w-full flex-col items-center overflow-hidden rounded-[18px] bg-[#D3E2FF]">
               {/* Pin */}
-              <div className="flex w-full justify-center pt-[10px]">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 36 35" fill="none">
+              <div className="flex w-full justify-center pt-[12px]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 36 35" fill="none">
                   <g filter="url(#filter0_m)">
                     <circle cx="13.0808" cy="13.0812" r="13.0782" transform="rotate(-22.4299 13.0808 13.0812)" fill="white"/>
                   </g>
@@ -250,14 +249,14 @@ export default function WhyTitanSeed() {
                 </svg>
               </div>
               {/* Title banner */}
-              <div className="mt-[8px] flex w-full items-center justify-center bg-[#001A4D] px-4 py-[10px]">
-                <h3 className="text-center font-['Libre_Baskerville',_serif] text-[14px] font-semibold leading-[105%] text-white">
+              <div className="mt-[10px] flex w-full min-h-[44px] items-center justify-center bg-[#001A4D] px-4 py-[8px]">
+                <h3 className="text-center font-['Libre_Baskerville',_serif] text-[15px] font-semibold leading-[115%] text-white">
                   {card.title}
                 </h3>
               </div>
               {/* Description */}
-              <div className="flex items-center justify-center px-[20px] pb-[18px] pt-[12px]">
-                <p className="text-center font-['Poppins',_sans-serif] text-[12px] font-normal leading-[140%] text-black">
+              <div className="flex flex-1 items-center justify-center px-[20px] pb-[12px]">
+                <p className="text-center font-['Poppins',_sans-serif] text-[13px] font-normal leading-[140%] text-black">
                   {card.desc}
                 </p>
               </div>

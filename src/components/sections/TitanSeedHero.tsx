@@ -31,7 +31,7 @@ export default function TitanSeedHero() {
             viewport={{ once: true, amount: 0.5 }}
           >
             <motion.h1
-              className="m-0 font-['Libre_Baskerville',_serif] font-semibold leading-[110%] text-[#001A4D]"
+              className="m-0 font-['Libre_Baskerville',_serif] font-semibold leading-[110%] text-[#001A4D] max-md:!text-[28px]"
               style={{ fontSize: "var(--heading-xl)" }}
               variants={{
                 hidden: { opacity: 0, y: 40 },
@@ -57,7 +57,7 @@ export default function TitanSeedHero() {
                 }}
               />
               <span
-                className="relative z-10 font-['Libre_Baskerville',_serif] font-semibold italic leading-none text-[#001A4D]"
+                className="relative z-10 font-['Libre_Baskerville',_serif] font-semibold italic leading-none text-[#001A4D] max-md:!text-[28px]"
                 style={{ fontSize: "var(--heading-xl)" }}
               >
                 first believer

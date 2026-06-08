@@ -291,7 +291,7 @@ export default function WhatFoundersGet() {
           <motion.div
             variants={{ hidden: { opacity: 0, scale: 0.5 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } } }}
             className="absolute left-[300px] top-[320px] z-20 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center pointer-events-none"
-            style={{ width: "150px", height: "150px" }}
+            style={{ width: "135px", height: "135px" }}
           >
             <div className="relative h-full w-full">
               <Image src="/images/misc/Whatfoundersget.svg" alt="Central Image" fill style={{ objectFit: "contain" }} priority />
