@@ -10,7 +10,6 @@ const impactData = [
   { num: "650+", label: "Founders Backed", caption: "Operators, builders, and category creators" },
   { num: "250M+", label: "Lives Impacted", caption: "Customers served by portfolio companies" },
   { num: "6", label: "Indicorns", caption: "Direct employment across the portfolio ecosystem" },
-  { num: "₹45,000 Cr+", label: "Capital Raised by Portfolio", caption: "From 100+ institutional investors globally" },
   { num: "4", label: "IPO's", caption: "Direct employment across the portfolio ecosystem" },
 ];
 
