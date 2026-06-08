@@ -265,7 +265,7 @@ export default function ImpactAndStories() {
             STAGE 2: FEATURED FOUNDER CREDENTIAL SHOWCASE
             ========================================================= */}
       <div
-        className="w-full bg-white flex flex-col items-center justify-start max-md:!pt-[24px] max-md:!pb-0"
+        className="w-full bg-white flex flex-col items-center justify-start max-md:!pt-[24px] max-md:!pb-[40px]"
         style={{
           paddingTop:    "clamp(40px, min(6.94vw, 10.18vh), 100px)",
           paddingBottom: "clamp(40px, min(6.94vw, 10.18vh), 100px)",

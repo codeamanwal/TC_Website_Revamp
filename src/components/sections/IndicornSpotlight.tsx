@@ -13,7 +13,6 @@ const indicornLogos: { src: string; alt: string; mode: "transparent" | "opaqueBg
   { src: "/images/logos/Shadowfax.svg",       alt: "Shadowfax",  mode: "transparent", scale: 1.0 },
   { src: "/images/logos/ofbusiness_white.svg", alt: "OfBusiness", mode: "white",       scale: 1.0 },
   { src: "/images/logos/mamaearthpng.webp",   alt: "Mamaearth",  mode: "opaqueBg",    scale: 1.6 },
-  { src: "/images/logos/GIVA.webp",           alt: "GIVA",       mode: "transparent", scale: 0.7 },
   { src: "/images/logos/Credgenics.svg",      alt: "Credgenics", mode: "transparent", scale: 1.0 },
 ];
 

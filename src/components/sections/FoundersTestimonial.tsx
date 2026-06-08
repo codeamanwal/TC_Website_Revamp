@@ -67,7 +67,10 @@ function TestimonialCard({ item }: { item: typeof testimonials[0] }) {
     >
       <motion.div
         className="relative h-full w-full cursor-pointer"
-        style={{ transformStyle: "preserve-3d" }}
+        style={{
+          transformStyle: "preserve-3d",
+          WebkitTransformStyle: "preserve-3d",
+        }}
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.6, ease: "easeInOut" }}
       >
@@ -76,6 +79,8 @@ function TestimonialCard({ item }: { item: typeof testimonials[0] }) {
           className="absolute inset-0 flex h-full w-full flex-col justify-end overflow-hidden"
           style={{
             backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "translateZ(0)",
             borderRadius: "clamp(8px, min(0.83vw, 1.22vh), 12px)",
           }}
         >
@@ -119,7 +124,8 @@ function TestimonialCard({ item }: { item: typeof testimonials[0] }) {
           className="absolute inset-0 flex h-full w-full flex-col justify-between overflow-hidden bg-[#C8DBFF] shadow-lg max-md:!p-[10px] max-md:overflow-y-auto max-md:[&::-webkit-scrollbar]:hidden"
           style={{
             backfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "rotateY(180deg) translateZ(1px)",
             borderRadius: "clamp(8px, min(0.83vw, 1.22vh), 12px)",
             padding: "clamp(12px, min(1.66vw, 2.44vh), 24px)",
           }}
