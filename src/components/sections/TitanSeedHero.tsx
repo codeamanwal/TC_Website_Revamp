@@ -1,126 +1,222 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
+import { useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
+
+/*
+  ANIMATED GRID BACKGROUND
+  Draws a grid on canvas. Grid lines near the cursor get a wavy
+  sine-wave distortion + brightness boost — effect is localised
+  to the cursor area only. Rest of the grid stays static.
+*/
+function AnimatedGrid() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef({ x: -9999, y: -9999 });
+
+  const onMouseMove = useCallback((e: MouseEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    mouseRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+  }, []);
+
+  const onMouseLeave = useCallback(() => {
+    mouseRef.current = { x: -9999, y: -9999 };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Attach mouse listeners to the PARENT section (canvas is pointer-events-none)
+    const section = canvas.parentElement;
+    if (section) {
+      section.addEventListener("mousemove", onMouseMove);
+      section.addEventListener("mouseleave", onMouseLeave);
+    }
+
+    let animationId: number;
+    const startTime = performance.now();
+
+    const resize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const GRID_SIZE = 90;
+    const BASE_ALPHA = 0.06;
+    const CURSOR_RADIUS = 180;
+    const WAVE_AMP = 6;
+
+    const draw = (now: number) => {
+      const elapsed = (now - startTime) / 1000;
+      const w = canvas.getBoundingClientRect().width;
+      const h = canvas.getBoundingClientRect().height;
+      const mx = mouseRef.current.x;
+      const my = mouseRef.current.y;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.lineWidth = 1;
+
+      // Helper: wave offset + alpha boost based on distance to cursor
+      const getWave = (px: number, py: number) => {
+        const dist = Math.sqrt((px - mx) ** 2 + (py - my) ** 2);
+        if (dist > CURSOR_RADIUS) return { offset: 0, alpha: BASE_ALPHA };
+
+        const proximity = 1 - dist / CURSOR_RADIUS;
+        const smooth = proximity * proximity;
+        const offset = Math.sin(elapsed * 3 + dist * 0.04) * WAVE_AMP * smooth;
+        const alpha = BASE_ALPHA + smooth * 0.14;
+
+        return { offset, alpha };
+      };
+
+      // ── VERTICAL LINES (displaced horizontally by wave near cursor) ──
+      for (let x = 0; x <= w; x += GRID_SIZE) {
+        ctx.beginPath();
+        let started = false;
+        for (let y = 0; y <= h; y += 4) {
+          const { offset, alpha } = getWave(x, y);
+          ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
+          const dx = x + offset;
+          if (!started) {
+            ctx.moveTo(dx, y);
+            started = true;
+          } else {
+            ctx.lineTo(dx, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(dx, y);
+          }
+        }
+        ctx.stroke();
+      }
+
+      // ── HORIZONTAL LINES (displaced vertically by wave near cursor) ──
+      for (let y = 0; y <= h; y += GRID_SIZE) {
+        ctx.beginPath();
+        let started = false;
+        for (let x = 0; x <= w; x += 4) {
+          const { offset, alpha } = getWave(x, y);
+          ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
+          const dy = y + offset;
+          if (!started) {
+            ctx.moveTo(x, dy);
+            started = true;
+          } else {
+            ctx.lineTo(x, dy);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, dy);
+          }
+        }
+        ctx.stroke();
+      }
+
+      animationId = requestAnimationFrame(draw);
+    };
+
+    resize();
+    animationId = requestAnimationFrame(draw);
+
+    window.addEventListener("resize", resize);
+    return () => {
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(animationId);
+      if (section) {
+        section.removeEventListener("mousemove", onMouseMove);
+        section.removeEventListener("mouseleave", onMouseLeave);
+      }
+    };
+  }, [onMouseMove, onMouseLeave]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="pointer-events-none absolute inset-0 h-full w-full"
+      style={{ zIndex: 0 }}
+    />
+  );
+}
 
 export default function TitanSeedHero() {
   return (
     <section
-      className="relative flex w-full items-center justify-center overflow-hidden bg-[#FBF7F0]"
+      className="relative flex w-full items-center justify-center overflow-hidden bg-[#FBF7F0] max-md:h-[50svh]"
       style={{
         marginTop: "var(--nav-height)",
-        minHeight: "calc(100svh - var(--nav-height))",
-        paddingTop: "clamp(40px, min(6.94vw, 10.18vh), 100px)",
-        paddingBottom: "clamp(40px, min(6.94vw, 10.18vh), 100px)",
+        height: "clamp(320px, 52vh, 520px)",
+        paddingTop: "clamp(20px, min(3vw, 4vh), 60px)",
+        paddingBottom: "clamp(20px, min(3vw, 4vh), 60px)",
         paddingLeft: "var(--section-px-wide)",
         paddingRight: "var(--section-px-wide)",
       }}
     >
 
-      {/* ── INNER WRAPPER ── */}
-      <div className="mx-auto flex w-full max-w-[1440px] flex-col items-center justify-between gap-[clamp(24px,5vw,60px)] lg:flex-row">
+      {/* ── ANIMATED GRID BACKGROUND ── */}
+      <AnimatedGrid />
 
-        {/* ── LEFT: TEXT CONTENT ── */}
-        <div className="flex w-full flex-col items-center max-lg:text-center lg:items-start lg:w-[55%]">
+      {/* ── CONTENT ── */}
+      <motion.div
+        className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-col items-center justify-center text-center"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+      >
 
-          <motion.div
-            className="flex flex-col items-center lg:items-start"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+        {/* ── HEADING: "We Are Your" + "first believer" on same line ── */}
+        <motion.h1
+          className="m-0 flex flex-row flex-wrap items-center justify-center gap-x-3 max-md:gap-x-2 font-['Libre_Baskerville',_serif] font-semibold leading-[110%] text-[#001A4D] max-md:!text-[28px]"
+          style={{ fontSize: "var(--heading-xl)" }}
+          variants={{
+            hidden: { opacity: 0, y: 40 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+          }}
+        >
+          <span>We Are Your</span>
+          <motion.span
+            className="relative inline-flex items-center justify-center overflow-hidden px-[4px] py-[6px] md:px-[6px] md:py-[8px] bg-transparent"
+            variants={{
+              hidden: { opacity: 0, x: -40 },
+              visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.3 } }
+            }}
           >
-            <motion.h1
-              className="m-0 font-['Libre_Baskerville',_serif] font-semibold leading-[110%] text-[#001A4D] max-md:!text-[28px]"
-              style={{ fontSize: "var(--heading-xl)" }}
-              variants={{
-                hidden: { opacity: 0, y: 40 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-              }}
-            >
-              We Are Your
-            </motion.h1>
-
             <motion.span
-              className="relative mt-[clamp(4px,0.5vw,8px)] inline-flex items-center justify-center overflow-hidden px-[4px] py-[8px] md:px-[6px] md:py-[10px] bg-transparent"
+              className="absolute inset-0 z-0 bg-[#D3E2FF] h-full w-full"
+              style={{ transformOrigin: "left" }}
               variants={{
-                hidden: { opacity: 0, x: -80 },
-                visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.3 } }
+                hidden: { scaleX: 0 },
+                visible: { scaleX: 1, transition: { duration: 0.6, ease: "easeInOut", delay: 0.8 } }
               }}
-            >
-              <motion.span
-                className="absolute inset-0 z-0 bg-[#D3E2FF] h-full w-full"
-                style={{ transformOrigin: "left" }}
-                variants={{
-                  hidden: { scaleX: 0 },
-                  visible: { scaleX: 1, transition: { duration: 0.6, ease: "easeInOut", delay: 0.9 } }
-                }}
-              />
-              <span
-                className="relative z-10 font-['Libre_Baskerville',_serif] font-semibold italic leading-none text-[#001A4D] max-md:!text-[28px]"
-                style={{ fontSize: "var(--heading-xl)" }}
-              >
-                first believer
-              </span>
-            </motion.span>
-          </motion.div>
-
-          <p
-            className="mt-[clamp(24px,min(3vw,5vh),48px)] max-w-[500px] font-['Poppins',_sans-serif] font-normal leading-[1.6] text-[#323232] max-lg:text-center"
-            style={{ fontSize: "clamp(14px, min(1.6vw, 2.35vh), 20px)" }}
-          >
-            Titan Seed backs the boldest founders who have absolute clarity of&nbsp; thought.
-          </p>
-
-          {/* ── BUTTONS ── */}
-          <div
-            className="mt-[clamp(24px,min(3vw,5vh),48px)] flex flex-row items-center max-lg:justify-center"
-            style={{ gap: "clamp(12px, min(1.66vw, 2.44vh), 24px)" }}
-          >
-            <Link
-              href="/portfolio"
-              className="flex shrink-0 items-center justify-center p-[10px] font-['Libre_Baskerville',_serif] font-semibold leading-[107%] text-[#001A4D] transition-opacity hover:opacity-60 h-[clamp(40px,min(3.75vw,5.5vh),54px)] w-[clamp(140px,min(12.85vw,18.84vh),185px)] text-[clamp(13px,min(1.11vw,1.63vh),16px)]"
-            >
-              View Portfolio
-            </Link>
-
-            <Link
-              href="/get-investment"
-              className="group relative m-0 flex shrink-0 items-center justify-center gap-[10px] overflow-hidden rounded-[clamp(7px,0.625vw,9px)] bg-[#001A4D] p-[10px] font-['Libre_Baskerville',_serif] font-semibold leading-[107%] text-[#F5F0E8] transition-all h-[clamp(40px,min(3.75vw,5.5vh),54px)] w-[clamp(140px,min(12.85vw,18.84vh),185px)] text-[clamp(13px,min(1.11vw,1.63vh),16px)]"
-              onMouseMove={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
-                e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
-              }}
-            >
-              <div
-                className="absolute inset-0 opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100 z-0"
-                style={{
-                  background: 'radial-gradient(circle 80px at var(--mouse-x, 50%) var(--mouse-y, 50%), #003CB3 0%, transparent 100%)'
-                }}
-              />
-              <span className="relative z-10">Get Investment</span>
-            </Link>
-          </div>
-
-        </div>
-
-        {/* ── RIGHT: IMAGE CONTENT ── */}
-        <div className="relative flex w-full justify-center lg:w-[45%] lg:justify-end">
-          <div className="relative aspect-[4/3] w-full max-w-[clamp(280px,40vw,650px)] lg:aspect-square">
-            <Image
-              src="/images/titanseedfund/pawn.webp"
-              alt="Titan Seed First Believer"
-              fill
-              priority
-              className="object-contain object-center lg:object-right"
             />
-          </div>
-        </div>
+            <span className="relative z-10 italic">
+              first believer
+            </span>
+          </motion.span>
+        </motion.h1>
 
-      </div>
+        {/* ── SUBTITLE ── */}
+        <motion.p
+          className="mt-[clamp(16px,min(2.5vw,4vh),36px)] max-w-[600px] font-['Poppins',_sans-serif] font-normal leading-[1.6] text-[#323232] text-center"
+          style={{ fontSize: "clamp(14px, min(1.6vw, 2.35vh), 20px)" }}
+          variants={{
+            hidden: { opacity: 0, y: 30 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.6 } }
+          }}
+        >
+          We back founders when belief matters the most, before the headlines, before the scale, before everyone else catches on.
+        </motion.p>
+
+      </motion.div>
     </section>
   );
 }

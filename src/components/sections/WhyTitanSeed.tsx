@@ -6,19 +6,19 @@ import { motion, useInView, Variants } from "framer-motion";
 const cardsData = [
   {
     title: "Day One Access",
-    desc: "Full Titan network access from Day 1 (500+ founders, strategic partners, TEN)",
+    desc: "From the moment we invest, you're in. 650+ founders, strategic partners, and the Titan Entrepreneur Network, all at your disposal.",
   },
   {
     title: "Founders Helping Founders",
-    desc: "500+ founder community with shared playbooks, templates, learnings",
+    desc: "A 650+ strong founder community that shares what actually works; playbooks, templates, and hard-won lessons.",
   },
   {
     title: "Warm Introduction",
-    desc: "Personal intros, not cold emails. Our network picks up the phone for you",
+    desc: "Every introduction we make is personal. Our network picks up for you.",
   },
   {
-    title: "Follow-On-Commitment",
-    desc: "Follow-on through Winners Fund for breakout companies",
+    title: "Follow-On Oppurtunity",
+    desc: "For companies that break out, we show up again, through our Winners Fund.",
   },
 ];
 
@@ -60,10 +60,10 @@ export default function WhyTitanSeed() {
     },
     spread: (i: number) => {
       const positions = [
-        { x: "-69%", y: "-68%" }, 
-        { x: "69%",  y: "-63%" }, 
-        { x: "-79%", y: "43%" },  
-        { x: "59%",  y: "48%" },  
+        { x: "-169%", y: "0%" }, 
+        { x: "-59%",  y: "0%" }, 
+        { x: "179%", y: "0%" },  
+        { x: "59%",  y: "0%" },  
       ];
       return {
         x: positions[i].x,
@@ -80,15 +80,15 @@ export default function WhyTitanSeed() {
       className="relative flex w-full flex-col items-center justify-start overflow-hidden bg-white"
       style={{
         minHeight: "calc(100svh - var(--nav-height))",
-        paddingTop: "clamp(40px, min(6.94vw, 10.18vh), 100px)",
-        paddingBottom: "clamp(40px, min(6.94vw, 10.18vh), 100px)",
+        paddingTop: "clamp(20px, min(3.5vw, 5vh), 50px)",
+        paddingBottom: "clamp(10px, min(1.5vw, 2vh), 20px)",
         paddingLeft: "var(--section-px-wide)",
         paddingRight: "var(--section-px-wide)",
       }}
     >
       {/* ── HEADING ── */}
       {/* FIXED: Reduced base mb for mobile (mb-[20px]), shifted previous clamp to md: and kept lg: intact */}
-      <div className="mx-auto mb-[20px] md:mb-[clamp(60px,10vh,120px)] lg:mb-[clamp(140px,15vh,200px)] flex w-full max-w-[1440px] shrink-0 flex-col">
+      <div className="mx-auto mb-[-150] flex w-full max-w-[1440px] shrink-0 flex-col">
         <motion.div
           className="flex w-full flex-row items-center max-lg:justify-center lg:justify-start"
           initial="hidden"

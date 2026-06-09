@@ -8,10 +8,6 @@ const lookForData = [
     desc: "You understand your customer's problem better than anyone. Not just from research, but from experience, obsession, or lived reality.",
   },
   {
-    title: "A market worth fighting for.",
-    desc: "Large enough to build a meaningful company, underserved enough that there's real territory to take. We're especially drawn to markets others have written off.",
-  },
-  {
     title: "A differentiated approach.",
     desc: "Technology, distribution, or business model edge. Something that makes your company structurally hard to copy.",
   },
@@ -108,7 +104,7 @@ export default function WhatWeLookFor() {
     <section
       className="relative flex w-full flex-col items-center justify-center overflow-hidden bg-white"
       style={{
-        paddingTop: "clamp(40px, min(6.94vw, 10.18vh), 100px)",
+        paddingTop: "clamp(10px, min(1.94vw, 2.18vh), 50px)",
         paddingBottom: "clamp(40px, min(6.94vw, 10.18vh), 100px)",
         paddingLeft: "var(--section-px-wide)",
         paddingRight: "var(--section-px-wide)",
