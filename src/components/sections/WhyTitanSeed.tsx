@@ -45,10 +45,10 @@ export default function WhyTitanSeed() {
   const cardVariants: Variants = {
     clustered: (i: number) => {
       const positions = [
-        { x: "-25%", y: "-25%", rotate: -12, zIndex: 1 },
-        { x: "25%",  y: "-25%", rotate: 12,  zIndex: 2 },
-        { x: "-20%", y: "30%",  rotate: 6,   zIndex: 3 },
-        { x: "30%",  y: "25%",  rotate: -7,  zIndex: 4 },
+        { x: "-25%", y: "125%", rotate: -12, zIndex: 1 },
+        { x: "25%",  y: "125%", rotate: 12,  zIndex: 2 },
+        { x: "-20%", y: "130%",  rotate: 6,   zIndex: 3 },
+        { x: "30%",  y: "125%",  rotate: -7,  zIndex: 4 },
       ];
       return {
         x: positions[i].x,
@@ -60,10 +60,10 @@ export default function WhyTitanSeed() {
     },
     spread: (i: number) => {
       const positions = [
-        { x: "-69%", y: "-68%" }, 
-        { x: "69%",  y: "-63%" }, 
-        { x: "-79%", y: "43%" },  
-        { x: "59%",  y: "48%" },  
+        { x: "-75%", y: "38%" },
+        { x: "45%",  y: "38%" },
+        { x: "-85%", y: "148%" },
+        { x: "35%",  y: "158%" },
       ];
       return {
         x: positions[i].x,
@@ -77,7 +77,7 @@ export default function WhyTitanSeed() {
 
   return (
     <section
-      className="relative flex w-full flex-col items-center justify-start overflow-hidden bg-white"
+      className="relative flex w-full flex-col items-center justify-start lg:flex-row lg:items-start lg:justify-center lg:gap-[clamp(20px,3vw,60px)] overflow-hidden bg-white"
       style={{
         minHeight: "calc(100svh - var(--nav-height))",
         paddingTop: "clamp(40px, min(6.94vw, 10.18vh), 100px)",
@@ -88,15 +88,15 @@ export default function WhyTitanSeed() {
     >
       {/* ── HEADING ── */}
       {/* FIXED: Reduced base mb for mobile (mb-[20px]), shifted previous clamp to md: and kept lg: intact */}
-      <div className="mx-auto mb-[20px] md:mb-[clamp(60px,10vh,120px)] lg:mb-[clamp(140px,15vh,200px)] flex w-full max-w-[1440px] shrink-0 flex-col">
+      <div className="mx-auto mb-[20px] md:mb-[clamp(60px,10vh,120px)] lg:mb-0 lg:shrink-0 lg:w-auto flex w-full max-w-[1440px] shrink-0 flex-col">
         <motion.div
-          className="flex w-full flex-row items-center max-lg:justify-center lg:justify-start"
+          className="flex w-full flex-row items-center max-lg:justify-center lg:flex-col lg:items-start"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.5 }}
         >
           <motion.h2
-            className="m-0 mr-2 whitespace-nowrap font-['Libre_Baskerville',_serif] text-[clamp(28px,4vw,var(--heading-xl))] font-semibold not-italic leading-none text-[#001A4D] md:mr-3"
+            className="m-0 mr-2 mb-2 whitespace-nowrap font-['Libre_Baskerville',_serif] text-[clamp(28px,4vw,var(--heading-xl))] font-semibold not-italic leading-none text-[#001A4D] md:mr-3"
             variants={{
               hidden: { opacity: 0, x: -40 },
               visible: { opacity: 1, x: 0, transition: { duration: 0.9, ease: "easeOut" } }
