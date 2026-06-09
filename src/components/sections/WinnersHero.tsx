@@ -1,15 +1,32 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 
 /*
   ANIMATED GRID BACKGROUND
-  Draws a subtle grid on canvas and animates a radial wave
-  that brightens grid lines as it passes through — no dots.
+  Draws a grid on canvas. Grid lines near the cursor get a wavy
+  sine-wave distortion + brightness boost — effect is localised
+  to the cursor area only. Rest of the grid stays static with
+  a subtle radial wave ripple from center.
 */
 function AnimatedGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef({ x: -9999, y: -9999 });
+
+  const onMouseMove = useCallback((e: MouseEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    mouseRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+  }, []);
+
+  const onMouseLeave = useCallback(() => {
+    mouseRef.current = { x: -9999, y: -9999 };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -17,6 +34,13 @@ function AnimatedGrid() {
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    // Attach mouse listeners to the PARENT section (canvas is pointer-events-none)
+    const section = canvas.parentElement;
+    if (section) {
+      section.addEventListener("mousemove", onMouseMove);
+      section.addEventListener("mouseleave", onMouseLeave);
+    }
 
     let animationId: number;
     const startTime = performance.now();
@@ -29,29 +53,34 @@ function AnimatedGrid() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const GRID_SIZE = 60;
-    const BASE_ALPHA = 0.055;
-    const WAVE_BOOST = 0.12;
+    const GRID_SIZE = 90;
+    const BASE_ALPHA = 0.06;
+    const CURSOR_RADIUS = 180;
+    const WAVE_AMP = 6;
+
+    // Radial wave constants (ambient animation when cursor is away)
+    const WAVE_BOOST = 0.10;
 
     const draw = (now: number) => {
       const elapsed = (now - startTime) / 1000;
       const w = canvas.getBoundingClientRect().width;
       const h = canvas.getBoundingClientRect().height;
+      const mx = mouseRef.current.x;
+      const my = mouseRef.current.y;
       const cx = w / 2;
       const cy = h / 2;
       const maxDist = Math.sqrt(cx * cx + cy * cy);
 
       ctx.clearRect(0, 0, w, h);
       ctx.lineWidth = 1;
-      ctx.lineCap = "butt";
 
-      // Two overlapping waves for organic feel
+      // Ambient radial waves from center
       const waves = [
         { speed: 110, width: 200 },
         { speed: 75, width: 280 },
       ];
 
-      const getBoost = (px: number, py: number) => {
+      const getRadialBoost = (px: number, py: number) => {
         const dist = Math.sqrt((px - cx) ** 2 + (py - cy) ** 2);
         let boost = 0;
         for (const wave of waves) {
@@ -64,30 +93,62 @@ function AnimatedGrid() {
         return Math.min(boost, WAVE_BOOST * 1.5);
       };
 
-      // ── VERTICAL LINES (draw in segments for per-segment glow) ──
-      for (let x = 0; x <= w; x += GRID_SIZE) {
-        for (let y = 0; y < h; y += GRID_SIZE) {
-          const midY = y + GRID_SIZE / 2;
-          const alpha = BASE_ALPHA + getBoost(x, midY);
-          ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.lineTo(x, Math.min(y + GRID_SIZE, h));
-          ctx.stroke();
+      // Cursor-follow: wave offset + alpha boost based on distance to cursor
+      const getWave = (px: number, py: number) => {
+        const radialBoost = getRadialBoost(px, py);
+        const dist = Math.sqrt((px - mx) ** 2 + (py - my) ** 2);
+        if (dist > CURSOR_RADIUS) {
+          return { offset: 0, alpha: BASE_ALPHA + radialBoost };
         }
+
+        const proximity = 1 - dist / CURSOR_RADIUS;
+        const smooth = proximity * proximity;
+        const offset = Math.sin(elapsed * 3 + dist * 0.04) * WAVE_AMP * smooth;
+        const alpha = BASE_ALPHA + radialBoost + smooth * 0.14;
+
+        return { offset, alpha };
+      };
+
+      // ── VERTICAL LINES (displaced horizontally by wave near cursor) ──
+      for (let x = 0; x <= w; x += GRID_SIZE) {
+        ctx.beginPath();
+        let started = false;
+        for (let y = 0; y <= h; y += 4) {
+          const { offset, alpha } = getWave(x, y);
+          ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
+          const dx = x + offset;
+          if (!started) {
+            ctx.moveTo(dx, y);
+            started = true;
+          } else {
+            ctx.lineTo(dx, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(dx, y);
+          }
+        }
+        ctx.stroke();
       }
 
-      // ── HORIZONTAL LINES (draw in segments for per-segment glow) ──
+      // ── HORIZONTAL LINES (displaced vertically by wave near cursor) ──
       for (let y = 0; y <= h; y += GRID_SIZE) {
-        for (let x = 0; x < w; x += GRID_SIZE) {
-          const midX = x + GRID_SIZE / 2;
-          const alpha = BASE_ALPHA + getBoost(midX, y);
+        ctx.beginPath();
+        let started = false;
+        for (let x = 0; x <= w; x += 4) {
+          const { offset, alpha } = getWave(x, y);
           ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.lineTo(Math.min(x + GRID_SIZE, w), y);
-          ctx.stroke();
+          const dy = y + offset;
+          if (!started) {
+            ctx.moveTo(x, dy);
+            started = true;
+          } else {
+            ctx.lineTo(x, dy);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, dy);
+          }
         }
+        ctx.stroke();
       }
 
       animationId = requestAnimationFrame(draw);
@@ -100,8 +161,12 @@ function AnimatedGrid() {
     return () => {
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(animationId);
+      if (section) {
+        section.removeEventListener("mousemove", onMouseMove);
+        section.removeEventListener("mouseleave", onMouseLeave);
+      }
     };
-  }, []);
+  }, [onMouseMove, onMouseLeave]);
 
   return (
     <canvas
@@ -115,12 +180,12 @@ function AnimatedGrid() {
 export default function WinnersHero() {
   return (
     <section
-      className="relative flex w-full items-center justify-center overflow-hidden bg-[#FBF7F0]"
+      className="relative flex w-full items-center justify-center overflow-hidden bg-[#FBF7F0] max-md:h-[50svh]"
       style={{
         marginTop: "var(--nav-height)",
-        minHeight: "calc(100svh - var(--nav-height))",
-        paddingTop: "clamp(40px, min(6.94vw, 10.18vh), 100px)",
-        paddingBottom: "clamp(40px, min(6.94vw, 10.18vh), 100px)",
+        height: "clamp(320px, 52vh, 520px)",
+        paddingTop: "clamp(20px, min(3vw, 4vh), 60px)",
+        paddingBottom: "clamp(20px, min(3vw, 4vh), 60px)",
         paddingLeft: "var(--section-px-wide)",
         paddingRight: "var(--section-px-wide)",
       }}
@@ -175,7 +240,7 @@ export default function WinnersHero() {
 
         {/* ── SUBTITLE ── */}
         <motion.p
-          className="mt-[clamp(20px,min(3vw,5vh),44px)] max-w-[600px] font-['Poppins',_sans-serif] font-normal leading-[1.6] text-[#323232] text-center"
+          className="mt-[clamp(16px,min(2.5vw,4vh),36px)] max-w-[600px] font-['Poppins',_sans-serif] font-normal leading-[1.6] text-[#323232] text-center"
           style={{ fontSize: "clamp(14px, min(1.6vw, 2.35vh), 20px)" }}
           variants={{
             hidden: { opacity: 0, y: 30 },
